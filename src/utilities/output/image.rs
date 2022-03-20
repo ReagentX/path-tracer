@@ -1,11 +1,17 @@
-use std::{fmt::format, fs::File, io::Write, iter::repeat, path::Path};
+use std::{
+    fs::File,
+    io::{stdout, Write},
+    iter::repeat,
+    path::Path,
+    time::Instant,
+};
 
 use crate::utilities::output::color::Color;
 
 pub struct Image {
-    width: u64,
-    height: u64,
-    buffer: Vec<Color>,
+    pub width: u64,
+    pub height: u64,
+    pub buffer: Vec<Color>,
 }
 
 impl Image {
@@ -32,10 +38,18 @@ impl Image {
         }
     }
 
-    pub fn walk(&self) -> impl Iterator<Item = (u64, u64)> + '_ {
+    /// Returns an iterator that yields coordinate pairs, starting from
+    /// (max_y, min_x), i.e. top left to bottom right, in the format of (row, col)
+    pub fn walk(width: u64, height: u64) -> impl Iterator<Item = (u64, u64)> {
+        (0..height)
+            .rev()
+            .flat_map(move |row| repeat(row).zip(0..width))
+    }
+
+    pub fn wwalk(&self) -> impl Iterator<Item = (u64, u64)> + '_ {
         (0..self.height)
             .rev()
-            .flat_map(|row| repeat(row).zip(0..self.width))
+            .flat_map(move |row| (0..self.width).map(move |col| (row, col)))
     }
 
     pub fn save(&self, filepath: &str, filename: &str) {
@@ -51,12 +65,25 @@ impl Image {
         writeln!(&mut file, "255").unwrap();
 
         // Write ppm colors
-        println!("Before for loop");
+        println!("Writing file...");
+        let mut lines = self.buffer.len();
+        let now = Instant::now();
         self.buffer.iter().for_each(|color| {
-            println!("{}", color.to_string());
-            writeln!(&mut file, "{}", color.to_string()).unwrap();
+            file.write_all(color.to_string().as_bytes()).unwrap();
+            lines -= 1;
+            print!("\rScanlines remaining: {}", lines);
         });
-        println!("Wrote data to {}", path.as_os_str().to_str().unwrap());
+
+        // Print metrics
+        let elapsed = now.elapsed().as_millis();
+        println!("\nWrote data to {:0}", path.as_os_str().to_str().unwrap());
+        if elapsed >= 1 {
+            println!(
+                "Wrote file in {:.2}s ({:.0} pixels per milisecond)",
+                elapsed as f64 / 1000.,
+                self.buffer.len() as f64 / elapsed as f64
+            );
+        }
     }
 }
 
@@ -98,17 +125,20 @@ mod image_tests {
     #[test]
     fn can_generate_buffer() {
         let image = Image::from_dimensions(3, 3);
-        assert_eq!(image.buffer, vec![
-            Color::default(),
-            Color::default(),
-            Color::default(),
-            Color::default(),
-            Color::default(),
-            Color::default(),
-            Color::default(),
-            Color::default(),
-            Color::default(),
-        ]);
+        assert_eq!(
+            image.buffer,
+            vec![
+                Color::default(),
+                Color::default(),
+                Color::default(),
+                Color::default(),
+                Color::default(),
+                Color::default(),
+                Color::default(),
+                Color::default(),
+                Color::default(),
+            ]
+        );
     }
 
     #[test]
@@ -116,7 +146,7 @@ mod image_tests {
         let width = 3;
         let height = 3;
         let image = Image::from_dimensions(width, height);
-        let mut walking_path = image.walk();
+        let mut walking_path = Image::walk(width, height);
 
         for i in (0..height).rev() {
             for j in 0..height {

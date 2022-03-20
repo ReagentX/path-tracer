@@ -1,8 +1,8 @@
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Color {
-    r: u8,
-    g: u8,
-    b: u8,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
 }
 
 impl Color {
@@ -11,7 +11,7 @@ impl Color {
     }
 
     pub fn to_string(&self) -> String {
-        format!("{} {} {}", self.r, self.g, self.b)
+        format!("{} {} {}\n", self.r, self.g, self.b)
     }
 }
 
