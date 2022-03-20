@@ -76,6 +76,7 @@ impl Image {
                 print!("\rScanlines remaining: {}", lines);
             }
         });
+        buf_file.flush();
 
         // Print metrics
         let elapsed = now.elapsed().as_millis();
