@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{stdout, Write},
+    io::{Write, BufWriter},
     iter::repeat,
     path::Path,
     time::Instant,
@@ -58,20 +58,23 @@ impl Image {
 
         // Create file
         let mut file = File::create(&path).unwrap();
+        let mut buf_file = BufWriter::new(file);
 
         // Add ppm metadata
-        writeln!(&mut file, "P3").unwrap();
-        writeln!(&mut file, "{} {}", self.width, self.height).unwrap();
-        writeln!(&mut file, "255").unwrap();
+        writeln!(&mut buf_file, "P3").unwrap();
+        writeln!(&mut buf_file, "{} {}", self.width, self.height).unwrap();
+        writeln!(&mut buf_file, "255").unwrap();
 
         // Write ppm colors
         println!("Writing file...");
         let mut lines = self.buffer.len();
         let now = Instant::now();
         self.buffer.iter().for_each(|color| {
-            file.write_all(color.to_string().as_bytes()).unwrap();
+            buf_file.write_all(color.to_string().as_bytes()).unwrap();
             lines -= 1;
-            print!("\rScanlines remaining: {}", lines);
+            if lines % 1000 == 0 {
+                print!("\rScanlines remaining: {}", lines);
+            }
         });
 
         // Print metrics
