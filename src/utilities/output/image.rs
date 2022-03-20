@@ -57,7 +57,7 @@ impl Image {
         let path = Path::new(filepath).join(format!("{filename}.ppm"));
 
         // Create file
-        let mut file = File::create(&path).unwrap();
+        let file = File::create(&path).unwrap();
         let mut buf_file = BufWriter::new(file);
 
         // Add ppm metadata
@@ -72,7 +72,7 @@ impl Image {
         self.buffer.iter().for_each(|color| {
             buf_file.write_all(color.to_string().as_bytes()).unwrap();
             lines -= 1;
-            if lines % 1000 == 0 {
+            if lines % 10000 == 0 {
                 print!("\rScanlines remaining: {}", lines);
             }
         });
