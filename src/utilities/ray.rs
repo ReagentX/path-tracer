@@ -1,8 +1,8 @@
 use crate::utilities::point::Point;
 
 pub struct Ray {
-    origin: Point,
-    direction: Point,
+    pub origin: Point,
+    pub direction: Point,
 }
 
 impl Ray {
