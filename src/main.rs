@@ -1,8 +1,10 @@
 mod utilities;
 
-use crate::utilities::{color::Color, image::Image};
+use crate::utilities::{color::Color, image::Image, point::Point, ray::Ray};
+
 use format_num::format_num;
 use rayon::prelude::*;
+
 use std::{env, time::Instant};
 
 fn main() {
@@ -12,7 +14,7 @@ fn main() {
     let now = Instant::now();
     for row in (0..image.height).rev() {
         let scanline: Vec<Color> = (0..image.width)
-            // .into_par_iter()
+            // .into_par_iter() // uncomment to use multiple cores!
             .map(|col| {
                 Color::new(
                     ((255 * col) / image.width) as u8,
