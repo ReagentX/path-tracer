@@ -26,7 +26,14 @@ fn main() {
             *image.color_at(row, col as u64) = *pixel;
         }
     }
-    println!("Rendered canvas in {}s", now.elapsed().as_secs());
+
+    // Print metrics
+    let elapsed = now.elapsed().as_millis();
+    println!(
+        "Rendered canvas in {:.2}s ({:.0} pixels per milisecond)",
+        elapsed as f64 / 1000.,
+        image.buffer.len() as f64 / elapsed as f64
+    );
 
     image.save("/home/css/path-tracer/out", "rainbow");
 }
