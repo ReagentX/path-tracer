@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{Write, BufWriter},
+    io::{BufWriter, Write},
     iter::repeat,
     path::Path,
     time::Instant,
@@ -44,12 +44,6 @@ impl Image {
         (0..height)
             .rev()
             .flat_map(move |row| repeat(row).zip(0..width))
-    }
-
-    pub fn wwalk(&self) -> impl Iterator<Item = (u64, u64)> + '_ {
-        (0..self.height)
-            .rev()
-            .flat_map(move |row| (0..self.width).map(move |col| (row, col)))
     }
 
     pub fn save(&self, filepath: &str, filename: &str) {
