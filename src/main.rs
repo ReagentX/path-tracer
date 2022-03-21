@@ -10,10 +10,11 @@ use std::{env, time::Instant};
 fn ray_color(r: &Ray) -> Color {
     let unit_direction = r.direction.normalized();
     let t = 0.5 * (unit_direction.y + 1.0);
+    // Generate a linear gradient from max color to min color for each hue
     Color::new(
-        ((1.0 - t) * 255. + (t * 10.)) as u8,
-        ((1.0 - t) * 255. + (t * 120.)) as u8,
-        ((1.0 - t) * 255. + (t * 255.)) as u8,
+        ((1.0 - t) * u8::MAX as f64 + (t * u8::MIN as f64)) as u8,
+        ((1.0 - t) * u8::MAX as f64 + (t * 120.)) as u8,
+        ((1.0 - t) * u8::MAX as f64 + (t * 255.)) as u8,
         255,
     )
 }
@@ -63,7 +64,10 @@ fn main() {
         format_num!(",d", image.buffer.len() as f64 / elapsed as f64)
     );
 
-    image.save(env::current_dir().unwrap().to_str().unwrap(), "out/sky_gradient");
+    image.save(
+        env::current_dir().unwrap().to_str().unwrap(),
+        "out/sky_gradient",
+    );
 }
 
 fn rainbow() {
