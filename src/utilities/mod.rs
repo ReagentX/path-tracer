@@ -1,1 +1,3 @@
-pub mod output;
+pub mod color;
+pub mod image;
+pub mod vector;

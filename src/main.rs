@@ -1,11 +1,11 @@
 mod utilities;
 
-use crate::utilities::output::{color::Color, image::Image};
+use crate::utilities::{color::Color, image::Image};
 use std::time::Instant;
 
 fn main() {
     // let mut image = Image::from_dimensions(256, 256);
-    let mut image = Image::from_ratio(500, 1.77777777);
+    let mut image = Image::from_ratio(600, 1.);
 
     let now = Instant::now();
     for (idx, (row, col)) in Image::walk(image.width, image.height).enumerate() {

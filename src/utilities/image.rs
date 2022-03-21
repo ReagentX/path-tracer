@@ -6,7 +6,7 @@ use std::{
     time::Instant,
 };
 
-use crate::utilities::output::color::Color;
+use crate::utilities::color::Color;
 
 pub struct Image {
     pub width: u64,
@@ -67,7 +67,7 @@ impl Image {
             buf_file.write_all(color.to_string().as_bytes()).unwrap();
             lines -= 1;
             if lines % 10000 == 0 {
-                print!("\rScanlines remaining: {}", lines);
+                print!("\rPixels remaining: {}", lines);
             }
         });
         buf_file.flush();
@@ -97,7 +97,7 @@ impl Default for Image {
 
 #[cfg(test)]
 mod image_tests {
-    use crate::utilities::output::{color::Color, image::Image};
+    use crate::utilities::{color::Color, image::Image};
 
     #[test]
     fn can_get_default() {
