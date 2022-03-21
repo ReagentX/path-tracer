@@ -23,7 +23,7 @@ fn main() {
             .collect();
 
         for (col, pixel) in scanline.iter().enumerate() {
-            *image.color_at(row, col as u64) = *pixel;
+            *image.color_at(col as u64, row) = *pixel;
         }
     }
 
@@ -35,5 +35,5 @@ fn main() {
         image.buffer.len() as f64 / elapsed as f64
     );
 
-    image.save("/home/css/path-tracer/out", "rainbow");
+    image.save("/Users/chris/Documents/Code/Rust/path-tracer/out", "rainbow");
 }
