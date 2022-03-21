@@ -6,6 +6,8 @@ use std::{
     time::Instant,
 };
 
+use format_num::format_num;
+
 use crate::utilities::color::Color;
 
 pub struct Image {
@@ -82,9 +84,9 @@ impl Image {
         println!("Wrote data to {:0}", path.as_os_str().to_str().unwrap());
         if elapsed >= 1 {
             println!(
-                "Wrote file in {:.2}s ({:.0} pixels per milisecond)",
+                "Wrote file in {:.2}s ({} pixels per milisecond)",
                 elapsed as f64 / 1000.,
-                self.buffer.len() as f64 / elapsed as f64
+                format_num!(",d", self.buffer.len() as f64 / elapsed as f64)
             );
         }
     }
