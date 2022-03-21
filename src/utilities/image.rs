@@ -21,6 +21,16 @@ impl Image {
         buffer
     }
 
+    /// Written by Steven Sardegna
+    fn get_index(&self, col: u64, row: u64) -> usize {
+        ((self.height - 1 - row) * self.width + col) as usize
+    }
+
+    pub fn color_at(&mut self, col: u64, row: u64) -> &mut Color {
+        let index = self.get_index(col, row);
+        &mut self.buffer[index]
+    }
+
     pub fn from_dimensions(width: u64, height: u64) -> Self {
         Image {
             width,
@@ -61,20 +71,15 @@ impl Image {
 
         // Write ppm colors
         println!("Writing file...");
-        let mut lines = self.buffer.len();
         let now = Instant::now();
         self.buffer.iter().for_each(|color| {
             buf_file.write_all(color.to_string().as_bytes()).unwrap();
-            lines -= 1;
-            if lines % 10000 == 0 {
-                print!("\rPixels remaining: {}", lines);
-            }
         });
         buf_file.flush();
 
         // Print metrics
         let elapsed = now.elapsed().as_millis();
-        println!("\nWrote data to {:0}", path.as_os_str().to_str().unwrap());
+        println!("Wrote data to {:0}", path.as_os_str().to_str().unwrap());
         if elapsed >= 1 {
             println!(
                 "Wrote file in {:.2}s ({:.0} pixels per milisecond)",
@@ -152,5 +157,35 @@ mod image_tests {
                 println!("{:?}", (i, j));
             }
         }
+    }
+
+    #[test]
+    fn can_get_valid_index_origin() {
+        let image = Image::from_dimensions(3, 3);
+        assert_eq!(image.get_index(0, 0), 6);
+    }
+
+    #[test]
+    fn can_get_valid_color_origin() {
+        let mut image = Image::from_dimensions(3, 3);
+        assert_eq!(*image.color_at(0, 0), Color::default());
+    }
+
+    #[test]
+    fn can_get_valid_index_middle() {
+        let image = Image::from_dimensions(3, 3);
+        assert_eq!(image.get_index(1, 1), 4)
+    }
+
+    #[test]
+    fn can_get_valid_index_bottom_right() {
+        let image = Image::from_dimensions(3, 3);
+        assert_eq!(image.get_index(2, 0), 8)
+    }
+
+    #[test]
+    fn can_get_valid_index_top_right() {
+        let image = Image::from_dimensions(5, 3);
+        assert_eq!(image.get_index(4, 2), 4)
     }
 }
