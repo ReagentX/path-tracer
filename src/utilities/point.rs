@@ -12,6 +12,10 @@ impl Point {
         Point { x, y, z }
     }
 
+    pub fn origin() -> Self {
+        Point::default()
+    }
+
     pub fn dot(self, rhs: Point) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
