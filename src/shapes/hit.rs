@@ -26,6 +26,6 @@ impl Hit {
     }
 }
 
-pub trait Hittable {
+pub trait Hittable: Send + Sync  {
     fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit>;
 }

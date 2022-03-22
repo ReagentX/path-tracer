@@ -1,53 +1,94 @@
+mod shapes;
 mod utilities;
 
-use crate::utilities::{color::Color, image::Image, point::Point, ray::Ray};
+use crate::{
+    shapes::{
+        hit::Hittable,
+        sphere::Sphere,
+        world::World,
+    },
+    utilities::{color::Color, image::Image, point::Point, ray::Ray, camera::Camera},
+};
 
 use format_num::format_num;
+use rand::Rng;
 use rayon::prelude::*;
 
 use std::{env, time::Instant};
 
-fn ray_color(r: &Ray) -> Color {
-    let unit_direction = r.direction.normalized();
-    let t = 0.5 * (unit_direction.y + 1.0);
-    // Generate a linear gradient from max color to min color for each hue
-    Color::new(
-        ((1.0 - t) * u8::MAX as f64 + (t * u8::MIN as f64)) as u8,
-        ((1.0 - t) * u8::MAX as f64 + (t * 120.)) as u8,
-        ((1.0 - t) * u8::MAX as f64 + (t * 255.)) as u8,
-        255,
-    )
+fn ray_color(ray: &Ray, world: &World) -> Color {
+    if let Some(hit) = world.hit(ray, 0., f64::INFINITY) {
+        // Hit, use normal vector to generate a color
+        Color::new(
+            (127. * (hit.normal.x + 1.)) as u8,
+            (127. * (hit.normal.y + 1.)) as u8,
+            (127. * (hit.normal.z + 1.)) as u8,
+            255,
+        )
+    } else {
+        // Miss, generate sky
+        let unit_direction = ray.direction.normalized();
+        let t = 0.5 * (unit_direction.y + 1.0);
+        // Generate a linear gradient from max color to min color for each hue
+        Color::new(
+            ((1.0 - t) * u8::MAX as f64 + (t * u8::MIN as f64)) as u8,
+            ((1.0 - t) * u8::MAX as f64 + (t * 50.)) as u8,
+            ((1.0 - t) * u8::MAX as f64 + (t * 255.)) as u8,
+            255,
+        )
+    }
 }
 
 fn main() {
     // Create canvas
     let aspect_ratio = 16. / 9.;
     let mut image = Image::from_ratio(500, aspect_ratio);
+    const SAMPLES: u64 = 100;
+
+    // Create world
+    let world: World = vec![
+        Box::new(Sphere::new(Point::new(0., 0., -1.), 0.5)),
+        Box::new(Sphere::new(Point::new(0., -100.5, -2.), 100.))
+    ];
 
     // Create camera
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-
-    // Tracer lens
-    let origin = Point::origin();
-    let horizontal = Point::new(viewport_width, 0., 0.);
-    let vertical = Point::new(0., viewport_height, 0.);
-    let lower_left_corner =
-        origin - horizontal / 2.0 - vertical / 2.0 - Point::new(0., 0., focal_length);
+    let camera = Camera::from_image(&image);
 
     let now = Instant::now();
     for row in 0..image.height {
         let scanline: Vec<Color> = (0..image.width)
-            // .into_par_iter() // uncomment to use multiple cores!
+            .into_par_iter() // drop in to use multiple cores!
             .map(|col| {
-                let u = (col as f64) / ((image.width - 1) as f64);
-                let v = (row as f64) / ((image.height - 1) as f64);
-                let r = Ray::new(
-                    origin,
-                    lower_left_corner + u * horizontal + v * vertical - origin,
-                );
-                ray_color(&r)
+                // Collect color samples for MSAA
+                let mut red_component = 0;
+                let mut blue_component = 0;
+                let mut green_component = 0;
+                
+                // Generate random rays for each pixel
+                for _ in 0..SAMPLES {
+                    // Get random endpoint
+                    let mut rng = rand::thread_rng();
+                    let random_u: f64 = rng.gen();
+                    let random_v: f64 = rng.gen();
+                    
+                    // Create valid (u, v) direction for ray
+                    let u = ((col as f64) + random_u) / ((image.width - 1) as f64);
+                    let v = ((row as f64) + random_v) / ((image.height - 1) as f64);
+                    let r = camera.get_ray(u, v);
+
+                    // Get the pixel color
+                    let pixel = ray_color(&r, &world);
+                    red_component += pixel.r as u64;
+                    green_component += pixel.g as u64;
+                    blue_component += pixel.b as u64;
+                }
+
+                Color::new(
+                    (red_component / SAMPLES) as u8, 
+                    (green_component / SAMPLES) as u8, 
+                    (blue_component / SAMPLES) as u8, 
+                    255
+                )
             })
             .collect();
 
@@ -66,7 +107,7 @@ fn main() {
 
     image.save(
         env::current_dir().unwrap().to_str().unwrap(),
-        "out/sky_gradient",
+        "out/sky_gradient"
     );
 }
 
