@@ -12,14 +12,17 @@ impl Point {
         Point { x, y, z }
     }
 
+    /// Alias for default, (0, 0, 0)
     pub fn origin() -> Self {
         Point::default()
     }
 
+    /// Dot product of 2 vectors
     pub fn dot(self, rhs: Point) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 
+    /// A vector dotted with itself is equal to the squared length of that vector
     pub fn len(self) -> f64 {
         self.dot(self).sqrt()
     }
@@ -32,6 +35,7 @@ impl Point {
         )
     }
 
+    /// Scale point to unit length (-1..1)
     pub fn normalized(self) -> Point {
         self / self.len()
     }
@@ -249,10 +253,10 @@ mod tests {
 
     #[test]
     fn can_norm() {
-        let v1 = Point::new(3., 2., 1.);
+        let v1 = Point::new(3., 2., -1.);
         let v2 = v1.normalized();
         assert!((v2.x - 0.8017837257372732).abs() < f64::EPSILON);
         assert!((v2.y - 0.5345224838248488).abs() < f64::EPSILON);
-        assert!((v2.z - 0.2672612419124244).abs() < f64::EPSILON);
+        assert!((v2.z + 0.2672612419124244).abs() < f64::EPSILON);
     }
 }
