@@ -1,9 +1,11 @@
 #![forbid(unsafe_code)]
 
+mod materials;
 mod shapes;
 mod utilities;
 
 use crate::{
+    materials::{diffuse::Lambertian, metal::Metal},
     shapes::{hit::Hittable, sphere::Sphere, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
@@ -20,16 +22,22 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
             return Color::default();
         }
 
-        // Hit, use normal vector to generate a color
-        // Color::rgb(
-        //     0.5 * (hit.normal.x + 1.),
-        //     0.5 * (hit.normal.y + 1.),
-        //     0.5 * (hit.normal.z + 1.),
-        // )
         // Hit, use random direction to generate a color
-        let target = hit.point + hit.normal + Point::random_in_sphere().normalized();
-        let random_ray = Ray::new(hit.point, target - hit.point);
-        0.5 * ray_color(&random_ray, world, depth - 1)
+        if let Some((attenuation, scattered)) = hit.material.scatter(ray, &hit) {
+            attenuation * ray_color(&scattered, world, depth - 1)
+        } else {
+            // Use normal vector to generate a color
+            // Color::rgb(
+            //     0.5 * (hit.normal.x + 1.),
+            //     0.5 * (hit.normal.y + 1.),
+            //     0.5 * (hit.normal.z + 1.),
+            // )
+            Color::default()
+        }
+
+        // let target = hit.point + hit.normal + Point::random_in_sphere().normalized();
+        // let random_ray = Ray::new(hit.point, target - hit.point);
+        // 0.5 * ray_color(&random_ray, world, depth - 1)
     } else {
         // Miss, generate sky
         let unit_direction = ray.direction.normalized();
@@ -47,14 +55,37 @@ fn main() {
     // Samples for MSAA
     const SAMPLES: f64 = 100.0;
     // Number of bounces before a ray dies
-    const MAX_DEPTH: u64 = 10;
+    const MAX_DEPTH: u64 = 100;
     // Gamma
     const GAMMA: f64 = 1.1;
 
     // Create world
     let world: World = vec![
-        Box::new(Sphere::new(Point::new(0., 0., -1.), 0.5)),
-        Box::new(Sphere::new(Point::new(0., -100.5, -2.), 100.)),
+        Box::new(Sphere::new(
+            Point::new(-5., -0.2, -5.),
+            0.5,
+            Box::new(Metal::new(Color::random(), 1.0)),
+        )),
+        Box::new(Sphere::new(
+            Point::new(0., 0., -1.),
+            0.5,
+            Box::new(Metal::new(Color::rgb(0.8, 0.8, 0.8), 1.0)),
+        )),
+        Box::new(Sphere::new(
+            Point::new(0.6, -0.5, -0.7),
+            0.05,
+            Box::new(Lambertian::new(Color::random(), 1.0)),
+        )),
+        Box::new(Sphere::new(
+            Point::new(-0.5, -0.5, -0.7),
+            0.08,
+            Box::new(Metal::new(Color::random(), 1.0)),
+        )),
+        Box::new(Sphere::new(
+            Point::new(0., -100.5, -2.),
+            100.,
+            Box::new(Lambertian::new(Color::random(), 1.0)),
+        )),
     ];
 
     // Create camera
