@@ -5,7 +5,7 @@ mod shapes;
 mod utilities;
 
 use crate::{
-    materials::{diffuse::Lambertian, metal::Metal},
+    materials::{diffuse::Lambertian, metal::Metal, mirror::Mirror, none::None, normal::Normal},
     shapes::{hit::Hittable, sphere::Sphere, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
@@ -26,13 +26,12 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         if let Some((attenuation, scattered)) = hit.material.scatter(ray, &hit) {
             attenuation * ray_color(&scattered, world, depth - 1)
         } else {
-            // Use normal vector to generate a color
-            // Color::rgb(
-            //     0.5 * (hit.normal.x + 1.),
-            //     0.5 * (hit.normal.y + 1.),
-            //     0.5 * (hit.normal.z + 1.),
-            // )
-            Color::default()
+            // Render surface normal
+            Color::rgb(
+                0.5 * (hit.normal.x + 1.),
+                0.5 * (hit.normal.y + 1.),
+                0.5 * (hit.normal.z + 1.),
+            )
         }
 
         // let target = hit.point + hit.normal + Point::random_in_sphere().normalized();
@@ -43,44 +42,57 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         let unit_direction = ray.direction.normalized();
         let t = 0.5 * (unit_direction.y + 1.0);
         // Generate a linear gradient from max color to min color for each hue
-        (1.0 - t) * Color::rgb(1.0, 1.0, 1.0) + t * Color::rgb(0.5, 0.7, 1.0)
+        (1.0 - t) * Color::rgb(1.0, 1.0, 1.0) + t * Color::rgb(0.2, 0.4, 0.9)
     }
 }
 
 fn main() {
     // Create canvas
     let aspect_ratio = 16. / 9.;
-    let mut image = Image::from_ratio(500, aspect_ratio);
+    let mut image = Image::from_ratio(2000, aspect_ratio);
 
     // Samples for MSAA
-    const SAMPLES: f64 = 100.0;
+    const SAMPLES: f64 = 500.0;
     // Number of bounces before a ray dies
     const MAX_DEPTH: u64 = 100;
     // Gamma
-    const GAMMA: f64 = 1.1;
+    const GAMMA: f64 = 1.5;
 
     // Create world
     let world: World = vec![
+        // Back
         Box::new(Sphere::new(
             Point::new(-5., -0.2, -5.),
             0.5,
-            Box::new(Metal::new(Color::random(), 1.0)),
+            Box::new(Metal::new(Color::random(), 0.9)),
         )),
+        // Center
         Box::new(Sphere::new(
-            Point::new(0., 0., -1.),
+            Point::new(0., 0.1, -1.),
             0.5,
-            Box::new(Metal::new(Color::rgb(0.8, 0.8, 0.8), 1.0)),
+            Box::new(Mirror::new(Color::gray(0.8))),
+
         )),
+        // Center container
+        Box::new(Sphere::new(
+            Point::new(0., 0.1, -1.),
+            0.55,
+            Box::new(Normal::new(1.0))),
+
+        ),
+        // Right
         Box::new(Sphere::new(
             Point::new(0.6, -0.5, -0.7),
             0.05,
             Box::new(Lambertian::new(Color::random(), 1.0)),
         )),
+        // Left
         Box::new(Sphere::new(
             Point::new(-0.5, -0.5, -0.7),
             0.08,
-            Box::new(Metal::new(Color::random(), 1.0)),
+            Box::new(Metal::new(Color::random(), 0.3)),
         )),
+        // Ground
         Box::new(Sphere::new(
             Point::new(0., -100.5, -2.),
             100.,
