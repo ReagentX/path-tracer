@@ -29,9 +29,9 @@ impl Color {
         }
         return format!(
             "{} {} {}\n",
-            (256.0 * self.r) as u64,
-            (256.0 * self.g) as u64,
-            (256.0 * self.b) as u64
+            (256.0 * self.r.clamp(0.0, 0.999)) as u64,
+            (256.0 * self.g.clamp(0.0, 0.999)) as u64,
+            (256.0 * self.b.clamp(0.0, 0.999)) as u64
         );
     }
 
