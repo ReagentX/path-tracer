@@ -22,16 +22,16 @@ impl Color {
     /// Format the color as a ppm triplet, applying gamma correction
     pub fn as_string(&self, gamma: f64) -> String {
         if gamma > 0. {
-            let ir = (256.0 * (self.r.powf(1.0 / gamma)).clamp(0.0, 0.999)) as u64;
-            let ig = (256.0 * (self.g.powf(1.0 / gamma)).clamp(0.0, 0.999)) as u64;
-            let ib = (256.0 * (self.b.powf(1.0 / gamma)).clamp(0.0, 0.999)) as u64;
+            let ir = (256.0 * (self.r.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u64;
+            let ig = (256.0 * (self.g.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u64;
+            let ib = (256.0 * (self.b.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u64;
             return format!("{} {} {}\n", ir, ig, ib);
         }
         return format!(
             "{} {} {}\n",
-            (256.0 * self.r.clamp(0.0, 0.999)) as u64,
-            (256.0 * self.g.clamp(0.0, 0.999)) as u64,
-            (256.0 * self.b.clamp(0.0, 0.999)) as u64
+            (256.0 * self.r.clamp(0.0, 1.0)) as u64,
+            (256.0 * self.g.clamp(0.0, 1.0)) as u64,
+            (256.0 * self.b.clamp(0.0, 1.0)) as u64
         );
     }
 
@@ -117,6 +117,12 @@ mod tests {
     fn can_get_string() {
         let color = Color::new(1., 0.8, 0.3, 255);
         assert_eq!(color.as_string(0.), String::from("256 204 76\n"));
+    }
+
+    #[test]
+    fn can_get_string_out_of_bounds() {
+        let color = Color::new(2., 0.8, -3.0, 255);
+        assert_eq!(color.as_string(0.), String::from("256 204 0\n"));
     }
 
     #[test]
