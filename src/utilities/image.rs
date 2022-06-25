@@ -52,13 +52,13 @@ impl Image {
 
     /// Returns an iterator that yields coordinate pairs, starting from
     /// (max_y, min_x), i.e. top left to bottom right, in the format of (row, col)
-    pub fn walk(width: u64, height: u64) -> impl Iterator<Item = (u64, u64)> {
-        (0..height)
+    pub fn walk(image: Self) -> impl Iterator<Item = (u64, u64)> {
+        (0..image.height)
             .rev()
-            .flat_map(move |row| repeat(row).zip(0..width))
+            .flat_map(move |row| repeat(row).zip(0..image.width))
     }
 
-    pub fn save(&self, filepath: &str, filename: &str) {
+    pub fn save(&self, filepath: &str, filename: &str, gamma: f64) {
         // Generate filepath
         let path = Path::new(filepath).join(format!("{filename}.ppm"));
 
@@ -75,7 +75,9 @@ impl Image {
         println!("Writing file...");
         let now = Instant::now();
         self.buffer.iter().for_each(|color| {
-            buf_file.write_all(color.to_string().as_bytes()).unwrap();
+            buf_file
+                .write_all(color.as_string(gamma).as_bytes())
+                .unwrap();
         });
         buf_file.flush();
 
@@ -151,7 +153,7 @@ mod image_tests {
         let width = 3;
         let height = 3;
         let image = Image::from_dimensions(width, height);
-        let mut walking_path = Image::walk(width, height);
+        let mut walking_path = Image::walk(image);
 
         for i in (0..height).rev() {
             for j in 0..height {

@@ -47,7 +47,7 @@ impl Hittable for Sphere {
 mod tests {
     use crate::{
         shapes::{
-            hit::{Hit, Hittable},
+            hit::{Hittable},
             sphere::Sphere,
         },
         utilities::{point::Point, ray::Ray},
