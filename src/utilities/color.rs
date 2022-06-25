@@ -1,5 +1,7 @@
 use std::ops::{Add, Mul};
 
+use rand::distributions::{Distribution, Uniform};
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
     /// Red component
@@ -31,6 +33,18 @@ impl Color {
             (256.0 * self.g) as u64,
             (256.0 * self.b) as u64
         );
+    }
+
+    /// Generate a random color
+    pub fn random() -> Color {
+        let between = Uniform::from(0.0..1.0);
+        let mut rng = rand::thread_rng();
+        Color::new(
+            between.sample(&mut rng),
+            between.sample(&mut rng),
+            between.sample(&mut rng),
+            255,
+        )
     }
 }
 
