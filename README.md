@@ -1,6 +1,8 @@
 # path-tracer
 Implementation of a path tracer in Rust
 
+![](img/materials.png)
+
 # Features
 
 - In-memory buffer of image canvas data
