@@ -2,12 +2,8 @@ mod shapes;
 mod utilities;
 
 use crate::{
-    shapes::{
-        hit::Hittable,
-        sphere::Sphere,
-        world::World,
-    },
-    utilities::{color::Color, image::Image, point::Point, ray::Ray, camera::Camera},
+    shapes::{hit::Hittable, sphere::Sphere, world::World},
+    utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
 
 use format_num::format_num;
@@ -48,7 +44,7 @@ fn main() {
     // Create world
     let world: World = vec![
         Box::new(Sphere::new(Point::new(0., 0., -1.), 0.5)),
-        Box::new(Sphere::new(Point::new(0., -100.5, -2.), 100.))
+        Box::new(Sphere::new(Point::new(0., -100.5, -2.), 100.)),
     ];
 
     // Create camera
@@ -63,14 +59,14 @@ fn main() {
                 let mut red_component = 0;
                 let mut blue_component = 0;
                 let mut green_component = 0;
-                
+
                 // Generate random rays for each pixel
                 for _ in 0..SAMPLES {
                     // Get random endpoint
                     let mut rng = rand::thread_rng();
                     let random_u: f64 = rng.gen();
                     let random_v: f64 = rng.gen();
-                    
+
                     // Create valid (u, v) direction for ray
                     let u = ((col as f64) + random_u) / ((image.width - 1) as f64);
                     let v = ((row as f64) + random_v) / ((image.height - 1) as f64);
@@ -84,10 +80,10 @@ fn main() {
                 }
 
                 Color::new(
-                    (red_component / SAMPLES) as u8, 
-                    (green_component / SAMPLES) as u8, 
-                    (blue_component / SAMPLES) as u8, 
-                    255
+                    (red_component / SAMPLES) as u8,
+                    (green_component / SAMPLES) as u8,
+                    (blue_component / SAMPLES) as u8,
+                    255,
                 )
             })
             .collect();
@@ -107,7 +103,7 @@ fn main() {
 
     image.save(
         env::current_dir().unwrap().to_str().unwrap(),
-        "out/sky_gradient"
+        "out/sky_gradient",
     );
 }
 
