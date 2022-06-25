@@ -15,12 +15,24 @@ pub struct Color {
 }
 
 impl Color {
+    /// Generate a new color from RGBA values
     pub fn new(r: f64, g: f64, b: f64, a: u8) -> Self {
         Self { r, g, b, a }
     }
 
+    /// Generate a new color from RGBA values
     pub fn rgb(r: f64, g: f64, b: f64) -> Self {
         Self { r, g, b, a: 255 }
+    }
+
+    /// Generate a grayscale color from 0 to 1 where 0 is black and 1 is white
+    pub fn gray(saturation: f64) -> Self {
+        Self {
+            r: saturation,
+            g: saturation,
+            b: saturation,
+            a: 255,
+        }
     }
 
     /// Format the color as a ppm triplet, applying gamma correction
@@ -123,6 +135,15 @@ mod tests {
         assert!((color.r - 0.2).abs() < f64::EPSILON);
         assert!((color.g - 0.6).abs() < f64::EPSILON);
         assert!((color.b - 0.8).abs() < f64::EPSILON);
+        assert_eq!(color.a, 255);
+    }
+
+    #[test]
+    fn can_create_gray() {
+        let color = Color::gray(0.2);
+        assert!((color.r - 0.2).abs() < f64::EPSILON);
+        assert!((color.g - 0.2).abs() < f64::EPSILON);
+        assert!((color.b - 0.2).abs() < f64::EPSILON);
         assert_eq!(color.a, 255);
     }
 
