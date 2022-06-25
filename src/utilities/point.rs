@@ -1,4 +1,6 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Range, Sub, SubAssign};
+
+use rand::distributions::{Distribution, Uniform};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Point {
@@ -38,6 +40,28 @@ impl Point {
     /// Scale point to unit length (-1..1)
     pub fn normalized(self) -> Point {
         self / self.len()
+    }
+
+    /// Generate a random point inside of a given uniform distribution
+    pub fn random(range: Range<f64>) -> Point {
+        let between = Uniform::from(range);
+        let mut rng = rand::thread_rng();
+        Point::new(
+            between.sample(&mut rng),
+            between.sample(&mut rng),
+            between.sample(&mut rng),
+        )
+    }
+
+    /// Pick a random point in a unit radius sphere, rejecting points outside of the sphere
+    /// https://en.wikipedia.org/wiki/Unit_sphere
+    pub fn random_in_sphere() -> Point {
+        // Create a point
+        let mut point = Self::random(-1.0..1.0);
+        while point.len() > 1.0 {
+            point = Self::random(-1.0..1.0);
+        }
+        point
     }
 }
 
@@ -133,6 +157,23 @@ mod tests {
         assert_eq!(v.x, 0.);
         assert_eq!(v.y, 0.);
         assert_eq!(v.z, 0.);
+    }
+
+    #[test]
+    fn can_create_random() {
+        let v = Point::random(1.0..10.0);
+        assert!(v.x >= 1.0 && v.x <= 10.0);
+        assert!(v.y >= 1.0 && v.y <= 10.0);
+        assert!(v.z >= 1.0 && v.z <= 10.0);
+    }
+
+    #[test]
+    fn can_create_random_in_sphere() {
+        let v = Point::random_in_sphere();
+        assert!(v.x >= -1.0 && v.x <= 1.0);
+        assert!(v.y >= -1.0 && v.y <= 1.0);
+        assert!(v.z >= -1.0 && v.z <= 1.0);
+        assert!(v.len() < 1.0)
     }
 
     #[test]
