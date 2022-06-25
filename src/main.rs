@@ -5,7 +5,7 @@ mod shapes;
 mod utilities;
 
 use crate::{
-    materials::{diffuse::Lambertian, metal::Metal, mirror::Mirror, none::None, normal::Normal},
+    materials::{diffuse::Lambertian, metal::Metal, mirror::Mirror, normal::Normal},
     shapes::{hit::Hittable, sphere::Sphere, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
@@ -26,35 +26,26 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         if let Some((attenuation, scattered)) = hit.material.scatter(ray, &hit) {
             attenuation * ray_color(&scattered, world, depth - 1)
         } else {
-            // Render surface normal
-            Color::rgb(
-                0.5 * (hit.normal.x + 1.),
-                0.5 * (hit.normal.y + 1.),
-                0.5 * (hit.normal.z + 1.),
-            )
+            Color::default()
         }
-
-        // let target = hit.point + hit.normal + Point::random_in_sphere().normalized();
-        // let random_ray = Ray::new(hit.point, target - hit.point);
-        // 0.5 * ray_color(&random_ray, world, depth - 1)
     } else {
         // Miss, generate sky
         let unit_direction = ray.direction.normalized();
         let t = 0.5 * (unit_direction.y + 1.0);
         // Generate a linear gradient from max color to min color for each hue
-        (1.0 - t) * Color::rgb(1.0, 1.0, 1.0) + t * Color::rgb(0.2, 0.4, 0.9)
+        (1.0 - t) * Color::rgb(1.0, 1.0, 1.0) + t * Color::rgb(0.3, 0.4, 0.8)
     }
 }
 
 fn main() {
     // Create canvas
     let aspect_ratio = 16. / 9.;
-    let mut image = Image::from_ratio(2000, aspect_ratio);
+    let mut image = Image::from_ratio(500, aspect_ratio);
 
     // Samples for MSAA
-    const SAMPLES: f64 = 500.0;
+    const SAMPLES: f64 = 100.0;
     // Number of bounces before a ray dies
-    const MAX_DEPTH: u64 = 100;
+    const MAX_DEPTH: u64 = 10;
     // Gamma
     const GAMMA: f64 = 1.5;
 
@@ -62,46 +53,50 @@ fn main() {
     let world: World = vec![
         // Back
         Box::new(Sphere::new(
-            Point::new(-5., -0.2, -5.),
+            Point::new(-2.8, -1.2, -7.),
             0.5,
             Box::new(Metal::new(Color::random(), 0.9)),
         )),
         // Center
         Box::new(Sphere::new(
-            Point::new(0., 0.1, -1.),
-            0.5,
-            Box::new(Mirror::new(Color::gray(0.8))),
-
+            Point::new(0., -0.08, -5.),
+            1.5,
+            Box::new(Mirror::new(Color::gray(0.9))),
         )),
-        // Center container
+        // Center left
         Box::new(Sphere::new(
-            Point::new(0., 0.1, -1.),
-            0.55,
-            Box::new(Normal::new(1.0))),
-
-        ),
-        // Right
+            Point::new(-3.3, -0.08, -5.2),
+            1.5,
+            Box::new(Normal::new(1.0)),
+        )),
+        // Center right
         Box::new(Sphere::new(
-            Point::new(0.6, -0.5, -0.7),
-            0.05,
+            Point::new(3.3, -0.08, -5.2),
+            1.5,
             Box::new(Lambertian::new(Color::random(), 1.0)),
         )),
-        // Left
+        // Front right
         Box::new(Sphere::new(
-            Point::new(-0.5, -0.5, -0.7),
-            0.08,
+            Point::new(1.2, -1.5, -4.),
+            0.3,
+            Box::new(Lambertian::new(Color::random(), 1.0)),
+        )),
+        // Front left
+        Box::new(Sphere::new(
+            Point::new(-1.2, -1.5, -4.),
+            0.2,
             Box::new(Metal::new(Color::random(), 0.3)),
         )),
         // Ground
         Box::new(Sphere::new(
-            Point::new(0., -100.5, -2.),
+            Point::new(0., -101.5, -2.),
             100.,
             Box::new(Lambertian::new(Color::random(), 1.0)),
         )),
     ];
 
     // Create camera
-    let camera = Camera::from_image(&image);
+    let camera = Camera::from_image(&image, 2.0);
 
     let now = Instant::now();
     for row in 0..image.height {
