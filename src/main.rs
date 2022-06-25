@@ -21,11 +21,10 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         }
 
         // Hit, use normal vector to generate a color
-        // Color::new(
+        // Color::rgb(
         //     0.5 * (hit.normal.x + 1.),
         //     0.5 * (hit.normal.y + 1.),
         //     0.5 * (hit.normal.z + 1.),
-        //     255,
         // )
         // Hit, use random direction to generate a color
         let target = hit.point + hit.normal + Point::random_in_sphere().normalized();
@@ -36,7 +35,7 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         let unit_direction = ray.direction.normalized();
         let t = 0.5 * (unit_direction.y + 1.0);
         // Generate a linear gradient from max color to min color for each hue
-        (1.0 - t) * Color::new(1.0, 1.0, 1.0, 255) + t * Color::new(0.5, 0.7, 1.0, 255)
+        (1.0 - t) * Color::rgb(1.0, 1.0, 1.0) + t * Color::rgb(0.5, 0.7, 1.0)
     }
 }
 
@@ -90,11 +89,10 @@ fn main() {
                     blue_component += pixel.b;
                 }
 
-                Color::new(
+                Color::rgb(
                     red_component / SAMPLES,
                     green_component / SAMPLES,
                     blue_component / SAMPLES,
-                    255,
                 )
             })
             .collect();
@@ -129,11 +127,10 @@ fn rainbow() {
         let scanline: Vec<Color> = (0..image.width)
             // .into_par_iter() // uncomment to use multiple cores!
             .map(|col| {
-                Color::new(
+                Color::rgb(
                     (255.0 * col as f64) / image.width as f64,
                     (255.0 * row as f64) / image.height as f64,
                     63.0,
-                    255,
                 )
             })
             .collect();

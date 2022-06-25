@@ -19,6 +19,10 @@ impl Color {
         Self { r, g, b, a }
     }
 
+    pub fn rgb(r: f64, g: f64, b: f64) -> Self {
+        Self { r, g, b, a: 255 }
+    }
+
     /// Format the color as a ppm triplet, applying gamma correction
     pub fn as_string(&self, gamma: f64) -> String {
         if gamma > 0. {
@@ -111,6 +115,15 @@ mod tests {
         assert!((color.g - 0.6).abs() < f64::EPSILON);
         assert!((color.b - 0.8).abs() < f64::EPSILON);
         assert_eq!(color.a, 100);
+    }
+
+    #[test]
+    fn can_create_rgb() {
+        let color = Color::rgb(0.2, 0.6, 0.8);
+        assert!((color.r - 0.2).abs() < f64::EPSILON);
+        assert!((color.g - 0.6).abs() < f64::EPSILON);
+        assert!((color.b - 0.8).abs() < f64::EPSILON);
+        assert_eq!(color.a, 255);
     }
 
     #[test]
