@@ -1,17 +1,28 @@
-use crate::utilities::{point::Point, ray::Ray};
+use crate::{
+    materials::scatter::Material,
+    utilities::{point::Point, ray::Ray},
+};
 
-pub struct Hit {
+pub struct Hit<'a> {
     pub point: Point,
     pub normal: Point,
+    pub material: &'a Material,
     pub time: f64,
     pub front_face: bool,
 }
 
-impl Hit {
-    pub fn new(point: Point, normal: Point, time: f64, front_face: bool) -> Self {
+impl<'a> Hit<'a> {
+    pub fn new(
+        point: Point,
+        normal: Point,
+        material: &'a Material,
+        time: f64,
+        front_face: bool,
+    ) -> Self {
         Hit {
             point,
             normal,
+            material,
             time,
             front_face,
         }
@@ -26,6 +37,6 @@ impl Hit {
     }
 }
 
-pub trait Hittable: Send + Sync  {
+pub trait Hittable: Send + Sync {
     fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit>;
 }

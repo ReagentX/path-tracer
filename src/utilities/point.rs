@@ -63,6 +63,16 @@ impl Point {
         }
         point
     }
+
+    /// Determine if a point is near to 0 in all dimensions
+    pub fn is_near_zero(&self) -> bool {
+        self.x.abs() < f64::EPSILON && self.y.abs() < f64::EPSILON && self.z.abs() < f64::EPSILON
+    }
+
+    /// Reflect a point given a surface normal ray impact
+    pub fn reflect(self, normal: Point) -> Point {
+        self - 2.0 * self.dot(normal) * normal
+    }
 }
 
 impl Default for Point {
@@ -299,5 +309,28 @@ mod tests {
         assert!((v2.x - 0.8017837257372732).abs() < f64::EPSILON);
         assert!((v2.y - 0.5345224838248488).abs() < f64::EPSILON);
         assert!((v2.z + 0.2672612419124244).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn is_near_zero() {
+        let v = Point::default();
+        assert!(v.is_near_zero())
+    }
+
+    #[test]
+    fn is_not_near_zero() {
+        let v = Point::new(2., 2., 2.);
+        assert!(!v.is_near_zero())
+    }
+
+    #[test]
+    fn can_reflect() {
+        let v = Point::new(2., 2., 2.);
+        let n = Point::new(-1., 0., -1.);
+        let reflected = v.reflect(n);
+        // panic!("{:?}", reflected);
+        assert!((reflected.x + 6.).abs() < f64::EPSILON);
+        assert!((reflected.y - 2.).abs() < f64::EPSILON);
+        assert!((reflected.z + 6.).abs() < f64::EPSILON);
     }
 }

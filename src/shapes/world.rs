@@ -1,10 +1,13 @@
-use crate::shapes::hit::{Hit, Hittable};
+use crate::{
+    shapes::hit::{Hit, Hittable},
+    utilities::ray::Ray,
+};
 
 pub type World = Vec<Box<dyn Hittable>>;
 
 impl Hittable for World {
     /// Iterate through each item in the world, returning the closest hit
-    fn hit(&self, ray: &crate::utilities::ray::Ray, time_min: f64, time_max: f64) -> Option<Hit> {
+    fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit> {
         let mut hit: Option<Hit> = None;
         // Stores the time it takes to hit the closest object to the camera
         // This ensures that we respect the y-axis, that is, closer objects

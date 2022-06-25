@@ -1,4 +1,5 @@
 use crate::{
+    materials::scatter::Material,
     shapes::hit::{Hit, Hittable},
     utilities::{point::Point, ray::Ray},
 };
@@ -6,11 +7,16 @@ use crate::{
 pub struct Sphere {
     center: Point,
     radius: f64,
+    material: Material,
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64) -> Self {
-        Sphere { center, radius }
+    pub fn new(center: Point, radius: f64, material: Material) -> Self {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -36,7 +42,7 @@ impl Hittable for Sphere {
             }
         }
 
-        let mut hit = Hit::new(ray.at(root), Point::origin(), root, false);
+        let mut hit = Hit::new(ray.at(root), Point::origin(), &self.material, root, false);
         let outward_normal = (hit.point - self.center) / self.radius;
         hit.set_face_normal(ray, outward_normal);
         Some(hit)
@@ -46,16 +52,15 @@ impl Hittable for Sphere {
 #[cfg(test)]
 mod tests {
     use crate::{
-        shapes::{
-            hit::{Hittable},
-            sphere::Sphere,
-        },
-        utilities::{point::Point, ray::Ray},
+        materials::diffuse::Lambertian,
+        shapes::{hit::Hittable, sphere::Sphere},
+        utilities::{color::Color, point::Point, ray::Ray},
     };
 
     #[test]
     fn can_create() {
-        let s = Sphere::new(Point::origin(), 1.0);
+        let mat = Lambertian::new(Color::random(), 1.0);
+        let s = Sphere::new(Point::origin(), 1.0, Box::new(mat));
         assert_eq!(s.radius, 1.0);
         assert_eq!(s.center.x, Point::default().x);
         assert_eq!(s.center.y, Point::default().y);
@@ -64,7 +69,8 @@ mod tests {
 
     #[test]
     fn can_hit() {
-        let s = Sphere::new(Point::origin(), 1.0);
+        let mat = Lambertian::new(Color::random(), 1.0);
+        let s = Sphere::new(Point::origin(), 1.0, Box::new(mat));
         assert!(s
             .hit(&Ray::new(Point::origin(), Point::new(0., 0., -1.)), 0., 1.,)
             .is_some());
@@ -72,7 +78,8 @@ mod tests {
 
     #[test]
     fn can_miss() {
-        let s = Sphere::new(Point::origin(), 1.0);
+        let mat = Lambertian::new(Color::random(), 1.0);
+        let s = Sphere::new(Point::origin(), 1.0, Box::new(mat));
         assert!(s
             .hit(
                 &Ray::new(Point::new(3., 3., -1.), Point::new(3., 3., -1.)),
