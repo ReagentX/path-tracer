@@ -9,18 +9,18 @@ pub struct Camera {
 
 impl Camera {
     // Create a Camera for a given image
-    pub fn from_image(image: &Image, focal_length: f64) -> Self {
+    pub fn from_image(image: &Image, focal_length: f64, position: Point) -> Self {
         let aspect_ratio = image.width as f64 / image.height as f64;
         let viewport_height = 2.0;
         let viewport_width = aspect_ratio * viewport_height;
 
-        let origin = Point::origin();
+        let lens_position = position;
         let horizontal = Point::new(viewport_width, 0., 0.);
         let vertical = Point::new(0., viewport_height, 0.);
         let lower_left_corner =
-            origin - horizontal / 2. - vertical / 2. - Point::new(0., 0., focal_length);
+            lens_position - horizontal / 2. - vertical / 2. - Point::new(0., 0., focal_length);
         Camera {
-            origin,
+            origin: lens_position,
             horizontal,
             vertical,
             lower_left_corner,
