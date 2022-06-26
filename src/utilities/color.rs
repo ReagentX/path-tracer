@@ -2,6 +2,8 @@ use std::ops::{Add, Mul};
 
 use rand::distributions::{Distribution, Uniform};
 
+const MAX_COLOR: f64 = 256.;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
     /// Red component
@@ -37,17 +39,17 @@ impl Color {
 
     /// Format the color as a ppm triplet, applying gamma correction
     pub fn as_string(&self, gamma: f64) -> String {
-        if gamma > 0. {
-            let ir = (256.0 * (self.r.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u64;
-            let ig = (256.0 * (self.g.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u64;
-            let ib = (256.0 * (self.b.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u64;
+        if gamma != 1. {
+            let ir = (MAX_COLOR * (self.r.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u8;
+            let ig = (MAX_COLOR * (self.g.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u8;
+            let ib = (MAX_COLOR * (self.b.powf(1.0 / gamma)).clamp(0.0, 1.0)) as u8;
             return format!("{} {} {}\n", ir, ig, ib);
         }
         return format!(
             "{} {} {}\n",
-            (256.0 * self.r.clamp(0.0, 1.0)) as u64,
-            (256.0 * self.g.clamp(0.0, 1.0)) as u64,
-            (256.0 * self.b.clamp(0.0, 1.0)) as u64
+            (MAX_COLOR * self.r.clamp(0.0, 1.0)) as u8,
+            (MAX_COLOR * self.g.clamp(0.0, 1.0)) as u8,
+            (MAX_COLOR * self.b.clamp(0.0, 1.0)) as u8
         );
     }
 

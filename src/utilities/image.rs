@@ -79,7 +79,7 @@ impl Image {
                 .write_all(color.as_string(gamma).as_bytes())
                 .unwrap();
         });
-        buf_file.flush();
+        buf_file.flush().unwrap();
 
         // Print metrics
         let elapsed = now.elapsed().as_millis();

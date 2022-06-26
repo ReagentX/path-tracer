@@ -47,7 +47,7 @@ fn main() {
     // Number of bounces before a ray dies
     const MAX_DEPTH: u64 = 10;
     // Gamma
-    const GAMMA: f64 = 1.5;
+    const GAMMA: f64 = 1.;
 
     // Create world
     let world: World = vec![
