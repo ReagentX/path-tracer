@@ -152,13 +152,13 @@ mod tests {
     #[test]
     fn can_get_string() {
         let color = Color::new(1., 0.8, 0.3, 255);
-        assert_eq!(color.as_string(0.), String::from("256 204 76\n"));
+        assert_eq!(color.as_string(1.), String::from("255 204 76\n"));
     }
 
     #[test]
     fn can_get_string_out_of_bounds() {
         let color = Color::new(2., 0.8, -3.0, 255);
-        assert_eq!(color.as_string(0.), String::from("256 204 0\n"));
+        assert_eq!(color.as_string(1.), String::from("255 204 0\n"));
     }
 
     #[test]
@@ -222,6 +222,6 @@ mod tests {
         assert_eq!(color.g, 0.85);
         assert_eq!(color.b, 1.);
         assert_eq!(color.a, 255);
-        assert_eq!(color.as_string(0.), String::from("192 217 256\n"));
+        assert_eq!(color.as_string(1.), String::from("192 217 255\n"));
     }
 }
