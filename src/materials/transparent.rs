@@ -22,4 +22,8 @@ impl Scatter for Filter {
         let color = self.opacity * self.alebdo;
         Some((color, ray_out))
     }
+
+    fn emit(&self) -> Color {
+        Color::default()
+    }
 }

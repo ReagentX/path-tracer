@@ -16,11 +16,16 @@ impl Light {
 }
 
 impl Scatter for Light {
-    fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
-        let ray_out = Ray::new(
-            hit.point,
-            ray_in.direction + Point::random_in_sphere().normalized(),
-        );
-        Some(((self.alebdo * (self.intensity / hit.point.len())), ray_out))
+    fn scatter(&self, _: &Ray, _: &Hit) -> Option<(Color, Ray)> {
+        // let ray_out = Ray::new(
+        //     hit.point,
+        //     ray_in.direction + Point::random_in_sphere().normalized(),
+        // );
+        // Some(((self.alebdo * (self.intensity / hit.point.len())), ray_out))
+        None
+    }
+
+    fn emit(&self) -> Color {
+        self.alebdo * self.intensity
     }
 }

@@ -29,4 +29,8 @@ impl Scatter for Metal {
             false => None,
         }
     }
+
+    fn emit(&self) -> Color {
+        Color::default()
+    }
 }
