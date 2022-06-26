@@ -1,7 +1,7 @@
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
-    utilities::{color::Color, ray::Ray},
+    utilities::{color::Color, point::Point, ray::Ray},
 };
 
 pub struct Light {
@@ -17,7 +17,10 @@ impl Light {
 
 impl Scatter for Light {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
-        let ray_out = Ray::new(hit.point, ray_in.direction);
+        let ray_out = Ray::new(
+            hit.point,
+            ray_in.direction + Point::random_in_sphere().normalized(),
+        );
         Some(((self.alebdo * (self.intensity / hit.point.len())), ray_out))
     }
 }
