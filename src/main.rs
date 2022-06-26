@@ -6,7 +6,8 @@ mod utilities;
 
 use crate::{
     materials::{
-        diffuse::Lambertian, metal::Metal, mirror::Mirror, normal::Normal, transparent::Filter,
+        diffuse::Lambertian, glass::Dielectric, light::Light, metal::Metal, mirror::Mirror,
+        normal::Normal, transparent::Filter,
     },
     shapes::{hit::Hittable, sphere::Sphere, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
@@ -21,10 +22,10 @@ use std::{env, time::Instant};
 fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
     if let Some(hit) = world.hit(ray, 0.001, f64::INFINITY) {
         if depth == 0 {
-            return Color::default();
+            return Color::gray(0.1);
         }
 
-        // Hit, use random direction to generate a color
+        // Hit, generate a color using the material
         if let Some((attenuation, scattered)) = hit.material.scatter(ray, &hit) {
             attenuation * ray_color(&scattered, world, depth - 1)
         } else {
@@ -35,16 +36,16 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         let unit_direction = ray.direction.normalized();
         let t = 0.5 * (unit_direction.y + 1.0);
         // Generate a linear gradient from max color to min color for each hue
-        (1.0 - t) * Color::rgb(1.0, 1.0, 1.0) + t * Color::rgb(0.3, 0.4, 0.8)
+        (1.0 - t) * Color::gray(1.0) + t * Color::rgb(0.3, 0.4, 0.8)
     }
 }
 
 fn main() {
     // Create canvas
-    let mut image = Image::widescreen(500);
+    let mut image = Image::square(800);
 
     // Samples for MSAA
-    const SAMPLES: f64 = 100.0;
+    const SAMPLES: f64 = 10.0;
     // Number of bounces before a ray dies
     const MAX_DEPTH: u64 = 10;
     // Gamma
@@ -54,37 +55,49 @@ fn main() {
     let world: World = vec![
         // Back
         Box::new(Sphere::new(
-            Point::new(-2.8, -1.2, -7.),
+            Point::new(-2.8, -1.15, -7.),
             0.5,
-            Box::new(Metal::new(Color::random(), 0.9)),
+            Box::new(Lambertian::new(Color::random(), 1.)),
         )),
         // Center
         Box::new(Sphere::new(
-            Point::new(0., -0.08, -5.),
-            1.5,
+            Point::new(0., 0., -5.),
+            -1.5,
             Box::new(Mirror::new(Color::gray(0.9))),
         )),
         // Center left
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
             1.5,
-            Box::new(Normal::new(1.0)),
+            Box::new(Normal::new(0.8, 1.0)),
         )),
         // Center right
         Box::new(Sphere::new(
             Point::new(3.3, -0.08, -5.2),
             1.5,
-            Box::new(Lambertian::new(Color::random(), 1.0)),
+            Box::new(Lambertian::new(Color::gray(1.), 1.5)),
         )),
-        // Front right
+        // Front upper right bubble
         Box::new(Sphere::new(
-            Point::new(1.2, -1.5, -4.),
-            0.3,
-            Box::new(Lambertian::new(Color::random(), 1.0)),
+            Point::new(1.2, 1.3, -3.8),
+            -0.4,
+            Box::new(Dielectric::new(Color::gray(0.9), 1.01)),
+        )),
+        // Sun
+        Box::new(Sphere::new(
+            Point::new(0., 0., 20.),
+            10.,
+            Box::new(Light::new(Color::rgb(1., 1., 0.), 25.)),
         )),
         // Front left
         Box::new(Sphere::new(
             Point::new(-1.2, -1.5, -4.),
+            0.2,
+            Box::new(Metal::new(Color::random(), 0.7)),
+        )),
+        // Front right
+        Box::new(Sphere::new(
+            Point::new(1.2, -1.5, -4.),
             0.2,
             Box::new(Metal::new(Color::random(), 0.3)),
         )),
