@@ -17,6 +17,7 @@ pub struct Image {
 }
 
 impl Image {
+    /// Fill the image buffer with the default color
     fn generate_buffer(width: u64, height: u64) -> Vec<Color> {
         let mut buffer: Vec<Color> = vec![Color::default(); (width * height) as usize];
         buffer.fill_with(Color::default);
@@ -28,11 +29,13 @@ impl Image {
         ((self.height - 1 - row) * self.width + col) as usize
     }
 
+    /// Get the color at a specific point in the image
     pub fn color_at(&mut self, col: u64, row: u64) -> &mut Color {
         let index = self.get_index(col, row);
         &mut self.buffer[index]
     }
 
+    /// Create a canvas of the specified dimensions
     pub fn from_dimensions(width: u64, height: u64) -> Self {
         Image {
             width,
@@ -41,6 +44,7 @@ impl Image {
         }
     }
 
+    /// Create a canvas given a height and the desired aspect ratio
     pub fn from_ratio(height: u64, aspect_ratio: f64) -> Self {
         let width = (height as f64 * aspect_ratio) as u64;
         Image {
@@ -48,6 +52,31 @@ impl Image {
             height,
             buffer: Self::generate_buffer(width, height),
         }
+    }
+
+    /// 16:9 widescreen canvas of the specified height
+    pub fn widescreen(height: u64) -> Self {
+        Image::from_ratio(height, 16. / 9.)
+    }
+
+    /// 4K image size
+    pub fn UHD() -> Self {
+        Image::from_dimensions(4096, 2160)
+    }
+
+    /// 2K image size
+    pub fn QHD() -> Self {
+        Image::from_dimensions(2560, 1440)
+    }
+
+    /// HD image size
+    pub fn HD() -> Self {
+        Image::from_dimensions(1920, 1080)
+    }
+
+    /// iPhone 13 Pro Max image Size
+    pub fn iPhone() -> Self {
+        Image::from_dimensions(2778, 1284)
     }
 
     /// Returns an iterator that yields coordinate pairs, starting from
@@ -58,6 +87,7 @@ impl Image {
             .flat_map(move |row| repeat(row).zip(0..image.width))
     }
 
+    /// Write the image buffer to a `.pmm` file
     pub fn save(&self, filepath: &str, filename: &str, gamma: f64) {
         // Generate filepath
         let path = Path::new(filepath).join(format!("{filename}.ppm"));
