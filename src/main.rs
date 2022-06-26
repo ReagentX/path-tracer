@@ -20,16 +20,16 @@ use rayon::prelude::*;
 use std::{env, time::Instant};
 
 fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
-    if let Some(hit) = world.hit(ray, 0.001, f64::INFINITY) {
-        if depth == 0 {
-            return Color::gray(0.1);
-        }
+    if depth == 0 {
+        return Color::default();
+    }
 
+    if let Some(hit) = world.hit(ray, 0.001, f64::INFINITY) {
         // Hit, generate a color using the material
         if let Some((attenuation, scattered)) = hit.material.scatter(ray, &hit) {
             attenuation * ray_color(&scattered, world, depth - 1)
         } else {
-            Color::default()
+            hit.material.emit()
         }
     } else {
         // Miss, generate sky
@@ -42,10 +42,10 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
 
 fn main() {
     // Create canvas
-    let mut image = Image::square(800);
+    let mut image = Image::widescreen(800);
 
     // Samples for MSAA
-    const SAMPLES: f64 = 100.0;
+    const SAMPLES: f64 = 1000.0;
     // Number of bounces before a ray dies
     const MAX_DEPTH: u64 = 100;
     // Gamma
@@ -57,7 +57,7 @@ fn main() {
         Box::new(Sphere::new(
             Point::new(3.1, -1.6, -8.),
             0.6,
-            Box::new(Light::new(Color::gray(1.), 13.)),
+            Box::new(Light::new(Color::gray(1.), 5.)),
         )),
         // Center
         Box::new(Sphere::new(
@@ -84,11 +84,11 @@ fn main() {
             Box::new(Dielectric::new(Color::gray(0.9), 1.01)),
         )),
         // Sun
-        // Box::new(Sphere::new(
-        //     Point::new(0., -1., 15.),
-        //     7.,
-        //     Box::new(Light::new(Color::rgb(1., 1., 0.), 20.)),
-        // )),
+        Box::new(Sphere::new(
+            Point::new(0., -1., 15.),
+            7.,
+            Box::new(Light::new(Color::rgb(1., 1., 0.), 10.)),
+        )),
         // Front left
         Box::new(Sphere::new(
             Point::new(-1.2, -1.35, -4.),
