@@ -6,11 +6,15 @@ use crate::{
 
 pub struct Normal {
     brightness: f64,
+    intensity: f64,
 }
 
 impl Normal {
-    pub fn new(brightness: f64) -> Self {
-        Self { brightness }
+    pub fn new(brightness: f64, intensity: f64) -> Self {
+        Self {
+            brightness,
+            intensity,
+        }
     }
 }
 
@@ -18,9 +22,9 @@ impl Scatter for Normal {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let ray_out = Ray::new(hit.point, ray_in.direction);
         let color = Color::rgb(
-            self.brightness * (hit.normal.x + 1.),
-            self.brightness * (hit.normal.y + 1.),
-            self.brightness * (hit.normal.z + 1.),
+            self.brightness * (hit.normal.x + self.intensity),
+            self.brightness * (hit.normal.y + self.intensity),
+            self.brightness * (hit.normal.z + self.intensity),
         );
         Some((color, ray_out))
     }

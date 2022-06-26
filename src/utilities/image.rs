@@ -59,6 +59,11 @@ impl Image {
         Image::from_ratio(height, 16. / 9.)
     }
 
+    /// 1:1 square canvas of the specified height
+    pub fn square(height: u64) -> Self {
+        Image::from_ratio(height, 1.)
+    }
+
     /// 4K image size
     pub fn UHD() -> Self {
         Image::from_dimensions(4096, 2160)
