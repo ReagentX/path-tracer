@@ -365,8 +365,8 @@ mod tests {
         let v = Point::new(2., 2., 2.);
         let n = Point::new(-1., 1., -1.);
         let refracted = v.refract(n, 1.0);
-        assert!((refracted.x + 3.3166247903554).abs() < f64::EPSILON);
-        assert!((refracted.y - 5.3166247903554).abs() < f64::EPSILON);
-        assert!((refracted.z + 3.3166247903554).abs() < f64::EPSILON);
+        assert!((refracted.x - 4.16227766016838).abs() < f64::EPSILON);
+        assert!((refracted.y + 0.16227766016837952).abs() < f64::EPSILON);
+        assert!((refracted.z - 4.16227766016838).abs() < f64::EPSILON);
     }
 }
