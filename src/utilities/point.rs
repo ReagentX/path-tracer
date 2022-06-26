@@ -73,6 +73,17 @@ impl Point {
     pub fn reflect(self, normal: Point) -> Point {
         self - 2.0 * self.dot(normal) * normal
     }
+
+    /// Refract a point given an impact normal and index of refraction
+    /// https://spie.org/publications/fg08_p13_index_of_refraction?SSO=1
+    pub fn refract(self, normal: Point, refraction_index: f64) -> Point {
+        // Calcualte parallel ray
+        let cos_theta = (-1. * self).dot(normal).min(1.);
+        let r_perpendicular = refraction_index * (self + cos_theta * normal);
+        // Calcualte parallel ray
+        let r_parallel = -1. * (1. - r_perpendicular.len().powi(2)).abs().sqrt() * normal;
+        r_perpendicular + r_parallel
+    }
 }
 
 impl Default for Point {
@@ -101,6 +112,14 @@ impl AddAssign for Point {
     }
 }
 
+impl Add<Point> for f64 {
+    type Output = Point;
+
+    fn add(self, rhs: Point) -> Self::Output {
+        Point::new(self + rhs.x, self + rhs.y, self + rhs.z)
+    }
+}
+
 impl Sub for Point {
     type Output = Self;
 
@@ -114,6 +133,14 @@ impl SubAssign for Point {
         self.x -= rhs.x;
         self.y -= rhs.y;
         self.z -= rhs.z;
+    }
+}
+
+impl Sub<Point> for f64 {
+    type Output = Point;
+
+    fn sub(self, rhs: Point) -> Self::Output {
+        Point::new(self - rhs.x, self - rhs.y, self - rhs.z)
     }
 }
 
@@ -328,9 +355,18 @@ mod tests {
         let v = Point::new(2., 2., 2.);
         let n = Point::new(-1., 0., -1.);
         let reflected = v.reflect(n);
-        // panic!("{:?}", reflected);
         assert!((reflected.x + 6.).abs() < f64::EPSILON);
         assert!((reflected.y - 2.).abs() < f64::EPSILON);
         assert!((reflected.z + 6.).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn can_refract() {
+        let v = Point::new(2., 2., 2.);
+        let n = Point::new(-1., 1., -1.);
+        let refracted = v.refract(n, 1.0);
+        assert!((refracted.x + 3.3166247903554).abs() < f64::EPSILON);
+        assert!((refracted.y - 5.3166247903554).abs() < f64::EPSILON);
+        assert!((refracted.z + 3.3166247903554).abs() < f64::EPSILON);
     }
 }
