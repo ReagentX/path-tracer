@@ -5,7 +5,9 @@ mod shapes;
 mod utilities;
 
 use crate::{
-    materials::{diffuse::Lambertian, metal::Metal, mirror::Mirror, normal::Normal},
+    materials::{
+        diffuse::Lambertian, metal::Metal, mirror::Mirror, normal::Normal, transparent::Filter,
+    },
     shapes::{hit::Hittable, sphere::Sphere, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
@@ -39,8 +41,7 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
 
 fn main() {
     // Create canvas
-    let aspect_ratio = 16. / 9.;
-    let mut image = Image::from_ratio(500, aspect_ratio);
+    let mut image = Image::widescreen(500);
 
     // Samples for MSAA
     const SAMPLES: f64 = 100.0;
@@ -96,7 +97,7 @@ fn main() {
     ];
 
     // Create camera
-    let camera = Camera::from_image(&image, 2.0);
+    let camera = Camera::from_image(&image, 2.0, Point::origin());
 
     let now = Instant::now();
     for row in 0..image.height {
