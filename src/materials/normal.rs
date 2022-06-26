@@ -28,4 +28,8 @@ impl Scatter for Normal {
         );
         Some((color, ray_out))
     }
+
+    fn emit(&self) -> Color {
+        Color::default()
+    }
 }

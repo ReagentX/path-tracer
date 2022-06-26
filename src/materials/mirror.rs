@@ -24,4 +24,8 @@ impl Scatter for Mirror {
             false => None,
         }
     }
+
+    fn emit(&self) -> Color {
+        Color::default()
+    }
 }

@@ -51,4 +51,8 @@ impl Scatter for Dielectric {
         let scattered = Ray::new(hit.point, direction);
         Some((self.alebdo, scattered))
     }
+
+    fn emit(&self) -> Color {
+        Color::default()
+    }
 }

@@ -28,4 +28,8 @@ impl Scatter for Lambertian {
 
         Some((self.alebdo, scattered))
     }
+
+    fn emit(&self) -> Color {
+        Color::default()
+    }
 }
