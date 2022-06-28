@@ -7,7 +7,7 @@ mod utilities;
 use crate::{
     materials::{
         diffuse::Lambertian, glass::Dielectric, light::Light, metal::Metal, mirror::Mirror,
-        normal::Normal, transparent::Filter,
+        normal::Normal, scatter::Scatter, transparent::Filter,
     },
     shapes::{hit::Hittable, sphere::Sphere, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
@@ -42,10 +42,10 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
 
 fn main() {
     // Create canvas
-    let mut image = Image::widescreen(800);
+    let mut image = Image::widescreen(500);
 
     // Samples for MSAA
-    const SAMPLES: f64 = 1000.0;
+    const SAMPLES: f64 = 100.0;
     // Number of bounces before a ray dies
     const MAX_DEPTH: u64 = 100;
     // Gamma
@@ -57,55 +57,55 @@ fn main() {
         Box::new(Sphere::new(
             Point::new(3.1, -1.6, -8.),
             0.6,
-            Box::new(Light::new(Color::gray(1.), 5.)),
+            Box::new(Light::random()),
         )),
         // Center
         Box::new(Sphere::new(
             Point::new(0., 0., -5.),
             -1.5,
-            Box::new(Mirror::new(Color::gray(0.9))),
+            Box::new(Mirror::random()),
         )),
         // Center left
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
             1.5,
-            Box::new(Metal::new(Color::rgb(0.2, 0.8, 0.5), 0.7)),
+            Box::new(Metal::random()),
         )),
         // Center right
         Box::new(Sphere::new(
             Point::new(3.3, -0.08, -5.2),
             -1.5,
-            Box::new(Dielectric::new(Color::gray(1.), 0.99)),
+            Box::new(Dielectric::random()),
         )),
         // Front upper right bubble
         Box::new(Sphere::new(
             Point::new(1.2, 1.3, -3.8),
             -0.5,
-            Box::new(Dielectric::new(Color::gray(0.9), 1.01)),
+            Box::new(Dielectric::random()),
         )),
         // Sun
         Box::new(Sphere::new(
             Point::new(0., -1., 15.),
             7.,
-            Box::new(Light::new(Color::rgb(1., 1., 0.), 10.)),
+            Box::new(Light::random()),
         )),
         // Front left
         Box::new(Sphere::new(
             Point::new(-1.2, -1.35, -4.),
             0.2,
-            Box::new(Dielectric::new(Color::gray(0.9), 1.5)),
+            Box::new(Dielectric::random()),
         )),
         // Front right
         Box::new(Sphere::new(
             Point::new(1.2, -1.5, -4.),
             0.2,
-            Box::new(Metal::new(Color::rgb(0.8, 0.9, 0.2), 0.2)),
+            Box::new(Metal::random()),
         )),
         // Ground
         Box::new(Sphere::new(
             Point::new(0., -101.5, -2.),
             100.,
-            Box::new(Lambertian::new(Color::rgb(0.9, 0.4, 0.4), 1.0)),
+            Box::new(Lambertian::random()),
         )),
     ];
 
