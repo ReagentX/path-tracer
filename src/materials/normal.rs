@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
@@ -31,5 +33,16 @@ impl Scatter for Normal {
 
     fn emit(&self) -> Color {
         Color::default()
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            brightness: rng.gen_range(1.0..2.0),
+            intensity: rng.gen_range(1.0..2.0),
+        }
     }
 }

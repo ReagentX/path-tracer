@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
@@ -5,27 +7,33 @@ use crate::{
 };
 
 pub struct Light {
-    alebdo: Color,
+    albedo: Color,
     intensity: f64,
 }
 
 impl Light {
-    pub fn new(alebdo: Color, intensity: f64) -> Self {
-        Self { alebdo, intensity }
+    pub fn new(albedo: Color, intensity: f64) -> Self {
+        Self { albedo, intensity }
     }
 }
 
 impl Scatter for Light {
     fn scatter(&self, _: &Ray, _: &Hit) -> Option<(Color, Ray)> {
-        // let ray_out = Ray::new(
-        //     hit.point,
-        //     ray_in.direction + Point::random_in_sphere().normalized(),
-        // );
-        // Some(((self.alebdo * (self.intensity / hit.point.len())), ray_out))
         None
     }
 
     fn emit(&self) -> Color {
-        self.alebdo * self.intensity
+        self.albedo * self.intensity
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            albedo: Color::random(),
+            intensity: rng.gen_range(1.0..10.0),
+        }
     }
 }

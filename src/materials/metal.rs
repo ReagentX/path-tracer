@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
@@ -5,14 +7,14 @@ use crate::{
 };
 
 pub struct Metal {
-    alebdo: Color,
+    albedo: Color,
     /// 0..1 range of matte, higher means less reflective
     matte: f64,
 }
 
 impl Metal {
-    pub fn new(alebdo: Color, matte: f64) -> Self {
-        Self { alebdo, matte }
+    pub fn new(albedo: Color, matte: f64) -> Self {
+        Self { albedo, matte }
     }
 }
 
@@ -25,12 +27,23 @@ impl Scatter for Metal {
         );
 
         match scattered.direction.dot(hit.normal) > 0.0 {
-            true => Some((self.alebdo, scattered)),
+            true => Some((self.albedo, scattered)),
             false => None,
         }
     }
 
     fn emit(&self) -> Color {
         Color::default()
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            albedo: Color::random(),
+            matte: rng.gen_range(0.1..1.0),
+        }
     }
 }
