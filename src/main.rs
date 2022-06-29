@@ -9,7 +9,7 @@ use crate::{
         diffuse::Lambertian, glass::Dielectric, light::Light, metal::Metal, mirror::Mirror,
         normal::Normal, scatter::Scatter, transparent::Filter,
     },
-    shapes::{hit::Hittable, sphere::Sphere, world::World},
+    shapes::{hit::Hittable, sphere::Sphere, world::World, triangle::Triangle},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
 
@@ -51,6 +51,7 @@ fn main() {
     // Gamma
     const GAMMA: f64 = 1.;
 
+    // (Horizontal, vertical, back)
     // Create world
     let world: World = vec![
         // Back
@@ -63,19 +64,42 @@ fn main() {
         Box::new(Sphere::new(
             Point::new(0., 0., -5.),
             -1.5,
-            Box::new(Mirror::random()),
+            Box::new(Mirror::new(Color::gray(1.))),
+        )),
+        Box::new(
+            Triangle::new(
+                Point::new(10., -2., 10.),
+                Point::new(-10., -2., 10.),
+                Point::new(0., 1.5, 10.),
+                Box::new(Mirror::random()),
+            )
+        ),
+        Box::new(Sphere::new(
+            Point::new(0., 1.5, -4.),
+            0.1,
+            Box::new(Mirror::new(Color::gray(0.1))),
+        )),
+        Box::new(Sphere::new(
+            Point::new(-2., 0., -4.),
+            0.1,
+            Box::new(Mirror::new(Color::gray(0.1))),
+        )),
+        Box::new(Sphere::new(
+            Point::new(2., 0., -4.),
+            0.1,
+            Box::new(Mirror::new(Color::gray(0.1))),
         )),
         // Center left
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
             1.5,
-            Box::new(Metal::random()),
+            Box::new(Mirror::new(Color::gray(1.))),
         )),
         // Center right
         Box::new(Sphere::new(
             Point::new(3.3, -0.08, -5.2),
             -1.5,
-            Box::new(Dielectric::random()),
+            Box::new(Mirror::new(Color::gray(1.))),
         )),
         // Front upper right bubble
         Box::new(Sphere::new(
@@ -110,7 +134,7 @@ fn main() {
     ];
 
     // Create camera
-    let camera = Camera::from_image(&image, 2.0, Point::origin());
+    let camera = Camera::from_image(&image, 1.5, Point::origin());
 
     let now = Instant::now();
     for row in 0..image.height {
