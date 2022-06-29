@@ -62,7 +62,7 @@ impl Scatter for Dielectric {
     {
         let mut rng = rand::thread_rng();
         Self {
-            albedo: Color::random(),
+            albedo: Color::gray(rng.gen_range(0.5..1.0)),
             refraction_index: rng.gen_range(-1.0..2.0),
         }
     }
