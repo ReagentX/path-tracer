@@ -64,31 +64,17 @@ fn main() {
         Box::new(Sphere::new(
             Point::new(0., 0., -5.),
             -1.5,
-            Box::new(Mirror::new(Color::gray(1.))),
+            Box::new(Dielectric::new(Color::gray(0.9), 1.01)),
         )),
+        // Triangle
         Box::new(
             Triangle::new(
-                Point::new(10., -2., 10.),
-                Point::new(-10., -2., 10.),
-                Point::new(0., 1.5, 10.),
-                Box::new(Mirror::random()),
+                Point::new(-10., -5., -10.),
+                Point::new(10., -5., -10.),
+                Point::new(0., 5., -10.),
+                Box::new(Metal::random()),
             )
         ),
-        Box::new(Sphere::new(
-            Point::new(0., 1.5, -4.),
-            0.1,
-            Box::new(Mirror::new(Color::gray(0.1))),
-        )),
-        Box::new(Sphere::new(
-            Point::new(-2., 0., -4.),
-            0.1,
-            Box::new(Mirror::new(Color::gray(0.1))),
-        )),
-        Box::new(Sphere::new(
-            Point::new(2., 0., -4.),
-            0.1,
-            Box::new(Mirror::new(Color::gray(0.1))),
-        )),
         // Center left
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
@@ -104,7 +90,7 @@ fn main() {
         // Front upper right bubble
         Box::new(Sphere::new(
             Point::new(1.2, 1.3, -3.8),
-            -0.5,
+            0.5,
             Box::new(Dielectric::random()),
         )),
         // Sun
@@ -121,7 +107,7 @@ fn main() {
         )),
         // Front right
         Box::new(Sphere::new(
-            Point::new(1.2, -1.5, -4.),
+            Point::new(1.2, -1.35, -4.),
             0.2,
             Box::new(Metal::random()),
         )),
@@ -134,7 +120,7 @@ fn main() {
     ];
 
     // Create camera
-    let camera = Camera::from_image(&image, 1.5, Point::origin());
+    let camera = Camera::from_image(&image, 2.0, Point::origin());
 
     let now = Instant::now();
     for row in 0..image.height {
