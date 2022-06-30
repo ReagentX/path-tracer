@@ -12,6 +12,10 @@ pub struct Triangle {
 }
 
 impl Triangle {
+    /// Order of points matters
+    /// - `a` is part of the base
+    /// - `b` is part of the base
+    /// - `c` is the zenith
     pub fn new(a: Point, b: Point, c: Point, material: Material) -> Self {
         Self { a, b, c, material }
     }
@@ -21,9 +25,12 @@ impl Hittable for Triangle {
     /// Implemented using the Möller–Trumbore intersection algorithm using the two-sided approach
     ///
     /// https://cadxfem.org/inf/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
+    ///
+    /// The order of the points matters for the math here:
+    /// https://courses.cs.washington.edu/courses/cse457/04sp/lectures/triangle_intersection.pdf
     fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit> {
-        let edge_1 = self.b - self.a;
-        let edge_2 = self.c - self.a;
+        let edge_1 = self.c - self.a;
+        let edge_2 = self.b - self.a;
 
         /*
         I don't know what this value from the paper is, but it is used
@@ -36,6 +43,7 @@ impl Hittable for Triangle {
 
         // If the determinant is near zero, the ray is parallel to the triangle
         if determinant > -f64::EPSILON && determinant < f64::EPSILON {
+            // panic!("det: {}", determinant);
             return None;
         }
 
@@ -58,6 +66,7 @@ impl Hittable for Triangle {
         out many intersection points ahead of time
         */
         if !(0. ..=1.).contains(&u) {
+            // panic!("u: {}", u);
             return None;
         }
 
@@ -70,22 +79,41 @@ impl Hittable for Triangle {
         let v = ray.direction.dot(q_vec) * inverse_determinant;
 
         // v follows the same rule as u
-        if v < 0.0 || u + v > 1.0  {
+        if u + v > 1. || v < 0. {
+            // panic!("v: {v}");
             return None;
         }
 
-        // If we got this far, the ray intersects the triangle at point (time, u, v)
-        let time = edge_2.dot(q_vec) * inverse_determinant;
-
-        if time > f64::EPSILON {
-            // Calculate the surface normal
-            let normal = edge_2.cross(edge_1).normalized();
-
-            return Some(Hit::new(ray.at(time), normal, &self.material, time, false));
+        // If we got this far, the ray intersects the triangle at point (u, v, time)
+        // Find
+        let mut time = edge_2.dot(q_vec) * -inverse_determinant;
+        if time < time_min || time_max < time {
+            // time = edge_2.dot(q_vec) * -inverse_determinant;
+            // if time < time_min || time_max < time {
+            //     return None;
+            // }
+            return None
         }
 
-        
-        None
+        let mut impact = ray.at(time);
+        let calc = Point::new(u, v, time);
+        // impact.x = u;
+        // impact.y = v;
+        // println!("Hit! impact: {impact:?}, calc: {calc:?}, ray: {ray:?}, time: {time}");
+        /* error:
+        Hit! impact: Point { x: 4.354068386840407, y: -0.19046286955622604, z: -2.0 },
+               calc: Point { x: 0.21064976977995506, y: 0.23807858694528286, z: -2.6554432225836835 },
+        ray: Ray { origin: Point { x: 2.0067232566727995, y: -1.5202926369048488, z: -1.8234288783928116 },
+                direction: Point { x: 0.8839748898429453, y: 0.500793899880386, z: -0.06649403011350732 } }
+        */
+
+        // Calculate the outward surface normal
+        let outward_normal = edge_1.cross(edge_2).normalized();
+        let mut hit = Hit::new(impact, outward_normal, &self.material, time, false);
+        hit.set_face_normal(ray, outward_normal);
+
+        return Some(hit);
+
     }
 }
 
@@ -101,9 +129,9 @@ mod tests {
     fn can_create() {
         let mat = Lambertian::random();
         let _t = Triangle::new(
-            Point::new(0., 3., 1.),
+            Point::new(2., 0., 1.),
             Point::new(-2., 0., 1.),
-            Point::new(0., -2., 1.),
+            Point::new(0., 3., 1.),
             Box::new(mat),
         );
     }
@@ -112,14 +140,14 @@ mod tests {
     fn can_hit() {
         let mat = Lambertian::random();
         let t = Triangle::new(
-            Point::new(2., 3., 1.),
-            Point::new(-2., -1., 1.),
-            Point::new(-1., -2., 1.),
+            Point::new(2., 0., -1.),
+            Point::new(-2., 0., -1.),
+            Point::new(0., 3., -1.),
             Box::new(mat),
         );
 
         assert!(t
-            .hit(&Ray::new(Point::origin(), Point::new(0., 0., 2.)), 0., 3.,)
+            .hit(&Ray::new(Point::origin(), Point::new(0., 1., -1.)), 0., 3.,)
             .is_some());
     }
 }
