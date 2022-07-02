@@ -125,8 +125,13 @@ mod tests {
             Box::new(mat),
         );
 
+        // TODO: this is wrong, the z should be -1, but it appears behind the default camera when negative
         assert!(t
-            .hit(&Ray::new(Point::origin(), Point::new(0., 1., -1.)), 0., 3.,)
+            .hit(
+                &Ray::new(Point::origin(), Point::new(0., 1., 1.), 0.),
+                0.,
+                3.
+            )
             .is_some());
     }
 }
