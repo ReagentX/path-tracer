@@ -51,80 +51,116 @@ fn main() {
     // Gamma
     const GAMMA: f64 = 1.;
 
+    // Shutter time
+    const SHUTTER_OPEN: f64 = 0.;
+    const SHUTTER_CLOSE: f64 = 1.;
+
     // Create world
     let world: World = vec![
         // Back
         Box::new(Sphere::new(
             Point::new(3.1, -1.6, -8.),
+            Point::new(3.1, -1.6, -8.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             0.6,
             Box::new(Light::random()),
         )),
         Box::new(Sphere::new(
             Point::new(-3.1, -1.6, -8.),
+            Point::new(-3.1, -1.6, -8.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             0.6,
             Box::new(Light::random()),
         )),
         // Center
         Box::new(Sphere::new(
             Point::new(0., 0., -5.),
+            Point::new(0., 0., -5.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             -1.5,
             Box::new(Mirror::new(Color::gray(0.9))),
         )),
         // Center left
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
+            Point::new(-3.3, -0.08, -5.2),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             1.5,
             Box::new(Metal::random()),
         )),
         // Center right
         Box::new(Sphere::new(
             Point::new(3.3, -0.08, -5.2),
+            Point::new(3.3, -0.08, -5.2),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             -1.5,
-            Box::new(Metal::random()),
+            Box::new(Dielectric::random()),
         )),
         // Front upper right bubble
         Box::new(Sphere::new(
             Point::new(1.2, 1.3, -3.8),
+            Point::new(1.2, 1.3, -3.8),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             0.5,
             Box::new(Dielectric::random()),
         )),
         // Sun
         Box::new(Sphere::new(
             Point::new(0., -1., 15.),
+            Point::new(0., -1., 15.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             7.,
             Box::new(Light::random()),
         )),
         // Front left
         Box::new(Sphere::new(
-            Point::new(-1.2, -1.35, -4.),
+            Point::new(-1.2, 1.0, -4.),
+            Point::new(-1.2, 1.1, -4.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             0.2,
             Box::new(Dielectric::random()),
         )),
         // Front right
         Box::new(Sphere::new(
-            Point::new(1.2, -1.35, -4.),
+            Point::new(1.2, -0.8, -4.),
+            Point::new(1.2, -1.0, -4.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             0.2,
             Box::new(Metal::random()),
         )),
         // Ground
         Box::new(Sphere::new(
             Point::new(0., -101.5, -2.),
+            Point::new(0., -101.5, -2.),
+            SHUTTER_OPEN,
+            SHUTTER_CLOSE,
             100.,
             Box::new(Lambertian::random()),
         )),
     ];
 
     // Create camera
-    let camera = Camera::new(
-        Point::new(0., 2., 0.),
-        Point::new(-10., 5., -7.5),
-        Point::new(9., -7., -5.5),
-        45.,
-        image.aspect_ratio(),
-        0.1,
-        10.
-    );
-    // let camera = Camera::default();
+    // let camera = Camera::new(
+    //     Point::new(0., 2., 0.),
+    //     Point::new(-10., 0., -7.5),
+    //     Point::new(10., 0., -5.5),
+    //     45.,
+    //     image.aspect_ratio(),
+    //     0.3,
+    //     10.,
+    //     SHUTTER_OPEN,
+    //     SHUTTER_CLOSE,
+    // );
+    let camera = Camera::default();
 
     let now = Instant::now();
     for row in 0..image.height {
