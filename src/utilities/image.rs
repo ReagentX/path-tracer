@@ -94,6 +94,10 @@ impl Image {
         }
     }
 
+    pub fn aspect_ratio(&self) -> f64 {
+        self.width as f64 / self.height as f64
+    }
+
     /// Returns an iterator that yields coordinate pairs, starting from
     /// (max_y, min_x), i.e. top left to bottom right, in the format of (row, col)
     pub fn walk(image: Self) -> impl Iterator<Item = (u64, u64)> {
