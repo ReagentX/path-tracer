@@ -9,7 +9,7 @@ use crate::{
         diffuse::Lambertian, glass::Dielectric, light::Light, metal::Metal, mirror::Mirror,
         normal::Normal, scatter::Scatter, transparent::Filter,
     },
-    shapes::{hit::Hittable, sphere::Sphere, world::World, triangle::Triangle},
+    shapes::{hit::Hittable, sphere::Sphere, triangle::Triangle, world::World},
     utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
 };
 
@@ -51,7 +51,6 @@ fn main() {
     // Gamma
     const GAMMA: f64 = 1.;
 
-    // (Horizontal, vertical, back)
     // Create world
     let world: World = vec![
         // Back
@@ -64,17 +63,8 @@ fn main() {
         Box::new(Sphere::new(
             Point::new(0., 0., -5.),
             -1.5,
-            Box::new(Dielectric::new(Color::gray(0.9), 1.01)),
+            Box::new(Mirror::new(Color::gray(0.9))),
         )),
-        // Triangle
-        Box::new(
-            Triangle::new(
-                Point::new(-10., -5., -10.),
-                Point::new(10., -5., -10.),
-                Point::new(0., 5., -10.),
-                Box::new(Metal::random()),
-            )
-        ),
         // Center left
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
