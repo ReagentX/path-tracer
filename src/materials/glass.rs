@@ -7,16 +7,16 @@ use crate::{
 };
 
 pub struct Dielectric {
-    alebdo: Color,
+    albedo: Color,
     /// air = 1.0, glass = 1.3–1.7, diamond = 2.4
     /// Higher indeces mean more refractive effects
     refraction_index: f64,
 }
 
 impl Dielectric {
-    pub fn new(alebdo: Color, refraction_index: f64) -> Self {
+    pub fn new(albedo: Color, refraction_index: f64) -> Self {
         Self {
-            alebdo,
+            albedo,
             refraction_index,
         }
     }
@@ -49,10 +49,21 @@ impl Scatter for Dielectric {
             .unwrap_or_else(|| unit_direction.refract(hit.normal, refraction_ratio));
 
         let scattered = Ray::new(hit.point, direction);
-        Some((self.alebdo, scattered))
+        Some((self.albedo, scattered))
     }
 
     fn emit(&self) -> Color {
         Color::default()
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            albedo: Color::gray(rng.gen_range(0.5..1.0)),
+            refraction_index: rng.gen_range(-1.0..2.0),
+        }
     }
 }

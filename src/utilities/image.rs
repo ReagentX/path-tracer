@@ -10,6 +10,11 @@ use format_num::format_num;
 
 use crate::utilities::color::Color;
 
+pub enum Orientation {
+    Landscape,
+    Portrait,
+}
+
 pub struct Image {
     pub width: u64,
     pub height: u64,
@@ -79,9 +84,14 @@ impl Image {
         Image::from_dimensions(1920, 1080)
     }
 
-    /// iPhone 13 Pro Max image Size
-    pub fn iPhone() -> Self {
-        Image::from_dimensions(2778, 1284)
+    /// iPhone 13 Pro Max image size
+    ///
+    /// Scale reduces the size by that amount. A value of `scale = 4` renders at 1/4 scale.
+    pub fn iPhone(scale: u64, orientation: Orientation) -> Self {
+        match orientation {
+            Orientation::Landscape => Image::from_dimensions(2778 / scale, 1284 / scale),
+            Orientation::Portrait => Image::from_dimensions(1284 / scale, 2778 / scale),
+        }
     }
 
     /// Returns an iterator that yields coordinate pairs, starting from

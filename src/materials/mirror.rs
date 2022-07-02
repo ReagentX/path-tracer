@@ -5,12 +5,12 @@ use crate::{
 };
 
 pub struct Mirror {
-    alebdo: Color,
+    albedo: Color,
 }
 
 impl Mirror {
-    pub fn new(alebdo: Color) -> Self {
-        Self { alebdo }
+    pub fn new(albedo: Color) -> Self {
+        Self { albedo }
     }
 }
 
@@ -20,12 +20,22 @@ impl Scatter for Mirror {
         let scattered = Ray::new(hit.point, reflected);
 
         match scattered.direction.dot(hit.normal) > 0.0 {
-            true => Some((self.alebdo, scattered)),
+            true => Some((self.albedo, scattered)),
             false => None,
         }
     }
 
     fn emit(&self) -> Color {
         Color::default()
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            albedo: Color::random(),
+        }
     }
 }

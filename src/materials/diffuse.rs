@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
@@ -5,14 +7,14 @@ use crate::{
 };
 
 pub struct Lambertian {
-    alebdo: Color,
+    albedo: Color,
     probability: f64,
 }
 
 impl Lambertian {
-    pub fn new(alebdo: Color, probability: f64) -> Self {
+    pub fn new(albedo: Color, probability: f64) -> Self {
         Self {
-            alebdo,
+            albedo,
             probability,
         }
     }
@@ -26,10 +28,21 @@ impl Scatter for Lambertian {
         }
         let scattered = Ray::new(hit.point, target);
 
-        Some((self.alebdo, scattered))
+        Some((self.albedo, scattered))
     }
 
     fn emit(&self) -> Color {
         Color::default()
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            albedo: Color::random(),
+            probability: rng.gen_range(0.0..1.0),
+        }
     }
 }

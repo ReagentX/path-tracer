@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
@@ -5,25 +7,35 @@ use crate::{
 };
 
 pub struct Filter {
-    alebdo: Color,
+    albedo: Color,
     opacity: f64,
 }
 
-// TODO: A proper transparent material needs to know the color of the incoming ray
 impl Filter {
-    pub fn new(alebdo: Color, opacity: f64) -> Self {
-        Self { alebdo, opacity }
+    pub fn new(albedo: Color, opacity: f64) -> Self {
+        Self { albedo, opacity }
     }
 }
 
 impl Scatter for Filter {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let ray_out = Ray::new(hit.point, ray_in.direction);
-        let color = self.opacity * self.alebdo;
+        let color = self.opacity * self.albedo;
         Some((color, ray_out))
     }
 
     fn emit(&self) -> Color {
         Color::default()
+    }
+
+    fn random() -> Self
+    where
+        Self: Sized,
+    {
+        let mut rng = rand::thread_rng();
+        Self {
+            albedo: Color::default(),
+            opacity: rng.gen_range(0.1..2.0),
+        }
     }
 }

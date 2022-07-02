@@ -20,6 +20,7 @@ impl Point {
     }
 
     /// Dot product of 2 vectors
+    /// https://en.wikipedia.org/wiki/Dot_product
     pub fn dot(self, rhs: Point) -> f64 {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
@@ -29,6 +30,8 @@ impl Point {
         self.dot(self).sqrt()
     }
 
+    /// Cross product of two vectors
+    /// https://en.wikipedia.org/wiki/Cross_product
     pub fn cross(self, rhs: Point) -> Point {
         Point::new(
             self.y * rhs.z + self.z * rhs.y,
