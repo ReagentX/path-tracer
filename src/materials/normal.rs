@@ -22,7 +22,7 @@ impl Normal {
 
 impl Scatter for Normal {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
-        let ray_out = Ray::new(hit.point, ray_in.direction);
+        let ray_out = Ray::new(hit.point, ray_in.direction, ray_in.time);
         let color = Color::rgb(
             self.brightness * (hit.normal.x + self.intensity),
             self.brightness * (hit.normal.y + self.intensity),
