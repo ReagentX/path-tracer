@@ -59,6 +59,11 @@ fn main() {
             0.6,
             Box::new(Light::random()),
         )),
+        Box::new(Sphere::new(
+            Point::new(-3.1, -1.6, -8.),
+            0.6,
+            Box::new(Light::random()),
+        )),
         // Center
         Box::new(Sphere::new(
             Point::new(0., 0., -5.),
@@ -69,13 +74,13 @@ fn main() {
         Box::new(Sphere::new(
             Point::new(-3.3, -0.08, -5.2),
             1.5,
-            Box::new(Mirror::new(Color::gray(1.))),
+            Box::new(Metal::random()),
         )),
         // Center right
         Box::new(Sphere::new(
             Point::new(3.3, -0.08, -5.2),
             -1.5,
-            Box::new(Mirror::new(Color::gray(1.))),
+            Box::new(Metal::random()),
         )),
         // Front upper right bubble
         Box::new(Sphere::new(
@@ -110,7 +115,16 @@ fn main() {
     ];
 
     // Create camera
-    let camera = Camera::from_image(&image, 2.0, Point::origin());
+    let camera = Camera::new(
+        Point::new(0., 2., 0.),
+        Point::new(-10., 5., -7.5),
+        Point::new(9., -7., -5.5),
+        45.,
+        image.aspect_ratio(),
+        0.1,
+        10.
+    );
+    // let camera = Camera::default();
 
     let now = Instant::now();
     for row in 0..image.height {
@@ -166,43 +180,5 @@ fn main() {
         env::current_dir().unwrap().to_str().unwrap(),
         "out/sky_gradient",
         GAMMA,
-    );
-}
-
-fn rainbow() {
-    // Create canvas
-    let aspect_ratio = 1.;
-    let mut image = Image::from_ratio(700, aspect_ratio);
-
-    let now = Instant::now();
-    for row in (0..image.height).rev() {
-        let scanline: Vec<Color> = (0..image.width)
-            // .into_par_iter() // uncomment to use multiple cores!
-            .map(|col| {
-                Color::rgb(
-                    (255.0 * col as f64) / image.width as f64,
-                    (255.0 * row as f64) / image.height as f64,
-                    63.0,
-                )
-            })
-            .collect();
-
-        for (col, pixel) in scanline.iter().enumerate() {
-            *image.color_at(col as u64, row) = *pixel;
-        }
-    }
-
-    // Print metrics
-    let elapsed = now.elapsed().as_millis();
-    println!(
-        "Rendered canvas in {:.2}s ({} pixels per milisecond)",
-        elapsed as f64 / 1000.,
-        format_num!(",d", image.buffer.len() as f64 / elapsed as f64)
-    );
-
-    image.save(
-        env::current_dir().unwrap().to_str().unwrap(),
-        "out/rainbow",
-        1.,
     );
 }

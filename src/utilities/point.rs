@@ -67,6 +67,13 @@ impl Point {
         point
     }
 
+    /// Pick a random point in a unit radius disk, rejecting points outside of the disk
+    pub fn random_in_disk() -> Point {
+        let mut p = Self::random_in_sphere();
+        p.z = 0.;
+        p
+    }
+
     /// Determine if a point is near to 0 in all dimensions
     pub fn is_near_zero(&self) -> bool {
         self.x.abs() < f64::EPSILON && self.y.abs() < f64::EPSILON && self.z.abs() < f64::EPSILON
