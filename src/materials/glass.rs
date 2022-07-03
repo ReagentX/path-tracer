@@ -6,6 +6,9 @@ use crate::{
     utilities::{color::Color, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Dielectric {
     albedo: Color,
     /// air = 1.0, glass = 1.3–1.7, diamond = 2.4
@@ -29,6 +32,7 @@ impl Dielectric {
     }
 }
 
+#[typetag::serde]
 impl Scatter for Dielectric {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let refraction_ratio = hit

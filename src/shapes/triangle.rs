@@ -4,6 +4,9 @@ use crate::{
     utilities::{point::Point, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Triangle {
     a: Point,
     b: Point,
@@ -21,6 +24,7 @@ impl Triangle {
     }
 }
 
+#[typetag::serde]
 impl Hittable for Triangle {
     /// Implemented using the Möller–Trumbore intersection algorithm using the two-sided approach
     ///

@@ -4,6 +4,9 @@ use crate::{
     utilities::{color::Color, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Mirror {
     albedo: Color,
 }
@@ -14,6 +17,7 @@ impl Mirror {
     }
 }
 
+#[typetag::serde]
 impl Scatter for Mirror {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let reflected = ray_in.direction.reflect(hit.normal).normalized();
