@@ -1,4 +1,5 @@
 use std::{
+    f64::consts::PI,
     fs::File,
     io::{BufWriter, Write},
     iter::repeat,
@@ -78,8 +79,8 @@ impl Image {
     /// 4K image size
     pub fn uhd(orientation: Orientation) -> Self {
         match orientation {
-            Orientation::Landscape => Image::from_dimensions(4096, 2160),
-            Orientation::Portrait => Image::from_dimensions(2160, 4096),
+            Orientation::Landscape => Image::from_dimensions(3840, 2160),
+            Orientation::Portrait => Image::from_dimensions(2160, 3840),
         }
     }
 
