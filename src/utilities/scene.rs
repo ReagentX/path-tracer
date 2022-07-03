@@ -13,23 +13,61 @@ use serde::{Deserialize, Serialize};
 use serde_yaml;
 
 #[derive(Deserialize, Serialize)]
+pub struct Settings {
+    /// Sample rays cast per pixel
+    pub msaa_samples: f64,
+    /// Maximum number of times a ray is allowed to bounce
+    pub max_depth: u64,
+    /// Gamma correction applied after render
+    pub gamma: f64,
+    /// Initial time the camera shutter was opened
+    pub shutter_open: f64,
+    /// Time the shutter was closed
+    pub shutter_close: f64,
+}
+
+impl Settings {
+    pub fn new(
+        msaa_samples: f64,
+        max_depth: u64,
+        gamma: f64,
+        shutter_open: f64,
+        shutter_close: f64,
+    ) -> Self {
+        Self {
+            msaa_samples,
+            max_depth,
+            gamma,
+            shutter_open,
+            shutter_close,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
 pub struct Scene {
-    pub camera: Camera,
+    /// Render configuration
+    pub settings: Settings,
+    /// Image output size
     pub image: Image,
+    /// Camera location
+    pub camera: Camera,
+    /// Objects to render
     pub world: World,
 }
 
 impl Scene {
-    pub fn new(camera: Camera, image: Image, world: World) -> Self {
+    pub fn new(camera: Camera, settings: Settings, image: Image, world: World) -> Self {
         Self {
-            camera,
+            settings,
             image,
+            camera,
             world,
         }
     }
 
-    pub fn render(&self, filepath: &str, filename: &str, gamma: f64) {
-        self.image.save(filepath, filename, gamma)
+    pub fn render(&self, filepath: &str, filename: &str) {
+        self.image.save(filepath, filename, self.settings.gamma)
     }
 
     fn path(filepath: &str, filename: &str) -> PathBuf {
