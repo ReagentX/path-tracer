@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use rand::Rng;
 
-use crate::utilities::{point::Point, ray::Ray};
+use crate::utilities::{image::Image, point::Point, ray::Ray};
 
 pub struct Camera {
     origin: Point,
@@ -55,6 +55,20 @@ impl Camera {
             shutter_open,
             shutter_close,
         }
+    }
+
+    pub fn default_from_image(image: &Image) -> Self {
+        Self::new(
+            Point::new(0., 1., 0.),
+            Point::new(0., 0., 3.),
+            Point::new(0., 0., -3.),
+            40.,
+            image.aspect_ratio(),
+            0.,
+            1.,
+            0.,
+            1.,
+        )
     }
 
     /// Create a ray from the camera towards (u, v)
