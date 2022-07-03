@@ -23,7 +23,7 @@ impl Scatter for Metal {
         let reflected = ray_in.direction.reflect(hit.normal).normalized();
         let scattered = Ray::new(
             hit.point,
-            reflected + self.matte * Point::random_in_sphere(),
+            reflected + self.matte * Point::random_in_sphere(), ray_in.time
         );
 
         match scattered.direction.dot(hit.normal) > 0.0 {

@@ -19,7 +19,7 @@ impl Filter {
 
 impl Scatter for Filter {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
-        let ray_out = Ray::new(hit.point, ray_in.direction);
+        let ray_out = Ray::new(hit.point, ray_in.direction, ray_in.time);
         let color = self.opacity * self.albedo;
         Some((color, ray_out))
     }

@@ -48,7 +48,7 @@ impl Scatter for Dielectric {
             .then(|| unit_direction.reflect(hit.normal))
             .unwrap_or_else(|| unit_direction.refract(hit.normal, refraction_ratio));
 
-        let scattered = Ray::new(hit.point, direction);
+        let scattered = Ray::new(hit.point, direction, ray_in.time);
         Some((self.albedo, scattered))
     }
 

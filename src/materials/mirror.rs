@@ -17,7 +17,7 @@ impl Mirror {
 impl Scatter for Mirror {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let reflected = ray_in.direction.reflect(hit.normal).normalized();
-        let scattered = Ray::new(hit.point, reflected);
+        let scattered = Ray::new(hit.point, reflected, ray_in.time);
 
         match scattered.direction.dot(hit.normal) > 0.0 {
             true => Some((self.albedo, scattered)),
