@@ -16,9 +16,9 @@ use super::{
     scene::{Scene, Settings},
 };
 
-fn build_scene() -> Scene {
-    let settings = Settings::new(100., 10, 1., 0., 1.);
-    let image = Image::uhd(Landscape);
+pub fn build_scene() -> Scene {
+    let settings = Settings::new(10., 10, 1., 0., 1.);
+    let image = Image::widescreen(500, Landscape);
     let camera = Camera::default_from_image(&image);
 
     // Create world

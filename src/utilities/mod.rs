@@ -4,4 +4,4 @@ pub mod image;
 pub mod point;
 pub mod ray;
 pub mod scene;
-mod scenebuilder;
+pub mod scenebuilder;
