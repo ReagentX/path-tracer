@@ -5,12 +5,8 @@ mod shapes;
 mod utilities;
 
 use crate::{
-    materials::{
-        diffuse::Lambertian, glass::Dielectric, light::Light, metal::Metal, mirror::Mirror,
-        normal::Normal, scatter::Scatter, transparent::Filter,
-    },
-    shapes::{hit::Hittable, sphere::Sphere, triangle::Triangle, world::World},
-    utilities::{camera::Camera, color::Color, image::Image, point::Point, ray::Ray},
+    shapes::{hit::Hittable, world::World},
+    utilities::{color::Color, ray::Ray, scene::Scene},
 };
 
 use format_num::format_num;
@@ -37,134 +33,19 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
         let t = 0.5 * (unit_direction.y + 1.0);
         // Generate a linear gradient from max color to min color for each hue
         (1.0 - t) * Color::gray(1.0) + t * Color::rgb(0.5, 0.5, 0.9)
+        // Color::default()
     }
 }
 
 fn main() {
-    // Create canvas
-    let mut image = Image::widescreen(500);
-
-    // Samples for MSAA
-    const SAMPLES: f64 = 100.0;
-    // Number of bounces before a ray dies
-    const MAX_DEPTH: u64 = 100;
-    // Gamma
-    const GAMMA: f64 = 1.;
-
-    // Shutter time
-    const SHUTTER_OPEN: f64 = 0.;
-    const SHUTTER_CLOSE: f64 = 1.;
-
-    // Create world
-    let world: World = vec![
-        // Back
-        Box::new(Sphere::new(
-            Point::new(3.1, -1.6, -8.),
-            Point::new(3.1, -1.6, -8.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            0.6,
-            Box::new(Light::random()),
-        )),
-        Box::new(Sphere::new(
-            Point::new(-3.1, -1.6, -8.),
-            Point::new(-3.1, -1.6, -8.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            0.6,
-            Box::new(Light::random()),
-        )),
-        // Center
-        Box::new(Sphere::new(
-            Point::new(0., 0., -5.),
-            Point::new(0., 0., -5.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            -1.5,
-            Box::new(Mirror::new(Color::gray(0.9))),
-        )),
-        // Center left
-        Box::new(Sphere::new(
-            Point::new(-3.3, -0.08, -5.2),
-            Point::new(-3.3, -0.08, -5.2),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            1.5,
-            Box::new(Metal::random()),
-        )),
-        // Center right
-        Box::new(Sphere::new(
-            Point::new(3.3, -0.08, -5.2),
-            Point::new(3.3, -0.08, -5.2),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            -1.5,
-            Box::new(Dielectric::random()),
-        )),
-        // Front upper right bubble
-        Box::new(Sphere::new(
-            Point::new(1.2, 1.3, -3.8),
-            Point::new(1.2, 1.3, -3.8),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            0.5,
-            Box::new(Dielectric::random()),
-        )),
-        // Sun
-        Box::new(Sphere::new(
-            Point::new(0., -1., 15.),
-            Point::new(0., -1., 15.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            7.,
-            Box::new(Light::random()),
-        )),
-        // Front left
-        Box::new(Sphere::new(
-            Point::new(-1.2, 1.0, -4.),
-            Point::new(-1.2, 1.1, -4.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            0.2,
-            Box::new(Dielectric::random()),
-        )),
-        // Front right
-        Box::new(Sphere::new(
-            Point::new(1.2, -0.8, -4.),
-            Point::new(1.2, -1.0, -4.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            0.2,
-            Box::new(Metal::random()),
-        )),
-        // Ground
-        Box::new(Sphere::new(
-            Point::new(0., -101.5, -2.),
-            Point::new(0., -101.5, -2.),
-            SHUTTER_OPEN,
-            SHUTTER_CLOSE,
-            100.,
-            Box::new(Lambertian::random()),
-        )),
-    ];
-
-    // Create camera
-    // let camera = Camera::new(
-    //     Point::new(0., 2., 0.),
-    //     Point::new(-10., 0., -7.5),
-    //     Point::new(10., 0., -5.5),
-    //     45.,
-    //     image.aspect_ratio(),
-    //     0.3,
-    //     10.,
-    //     SHUTTER_OPEN,
-    //     SHUTTER_CLOSE,
-    // );
-    let camera = Camera::default();
+    let mut scene = Scene::load(
+        env::current_dir().unwrap().to_str().unwrap(),
+        "scenes/dof_4k",
+    );
 
     let now = Instant::now();
-    for row in 0..image.height {
-        let scanline: Vec<Color> = (0..image.width)
+    for row in 0..scene.image.height {
+        let scanline: Vec<Color> = (0..scene.image.width)
             .into_par_iter() // drop in to use multiple cores!
             .map(|col| {
                 // Collect color samples for MSAA
@@ -173,34 +54,34 @@ fn main() {
                 let mut green_component = 0.;
 
                 // Generate random rays for each pixel
-                for _ in 0..SAMPLES as u64 {
+                for _ in 0..scene.settings.msaa_samples as u64 {
                     // Get random endpoint
                     let mut rng = rand::thread_rng();
                     let random_u: f64 = rng.gen();
                     let random_v: f64 = rng.gen();
 
                     // Create valid (u, v) direction for ray
-                    let u = ((col as f64) + random_u) / ((image.width - 1) as f64);
-                    let v = ((row as f64) + random_v) / ((image.height - 1) as f64);
-                    let r = camera.get_ray(u, v);
+                    let u = ((col as f64) + random_u) / ((scene.image.width - 1) as f64);
+                    let v = ((row as f64) + random_v) / ((scene.image.height - 1) as f64);
+                    let r = scene.camera.get_ray(u, v);
 
                     // Get the pixel color
-                    let pixel = ray_color(&r, &world, MAX_DEPTH);
+                    let pixel = ray_color(&r, &scene.world, scene.settings.max_depth);
                     red_component += pixel.r;
                     green_component += pixel.g;
                     blue_component += pixel.b;
                 }
 
                 Color::rgb(
-                    red_component / SAMPLES,
-                    green_component / SAMPLES,
-                    blue_component / SAMPLES,
+                    red_component / scene.settings.msaa_samples,
+                    green_component / scene.settings.msaa_samples,
+                    blue_component / scene.settings.msaa_samples,
                 )
             })
             .collect();
 
         for (col, pixel) in scanline.iter().enumerate() {
-            *image.color_at(col as u64, row) = *pixel;
+            *scene.image.color_at(col as u64, row) = *pixel;
         }
     }
 
@@ -209,12 +90,11 @@ fn main() {
     println!(
         "Rendered canvas in {:.2}s ({} pixels per milisecond)",
         elapsed as f64 / 1000.,
-        format_num!(",d", image.buffer.len() as f64 / elapsed as f64)
+        format_num!(",d", scene.image.buffer.len() as f64 / elapsed as f64)
     );
 
-    image.save(
+    scene.render(
         env::current_dir().unwrap().to_str().unwrap(),
-        "out/sky_gradient",
-        GAMMA,
+        "render/sky_gradient",
     );
 }
