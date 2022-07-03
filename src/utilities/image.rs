@@ -7,6 +7,7 @@ use std::{
 };
 
 use format_num::format_num;
+use serde::{Deserialize, Serialize};
 
 use crate::utilities::color::Color;
 
@@ -15,15 +16,17 @@ pub enum Orientation {
     Portrait,
 }
 
+#[derive(Deserialize, Serialize)]
 pub struct Image {
     pub width: u64,
     pub height: u64,
+    #[serde(skip_serializing, skip_deserializing)]
     pub buffer: Vec<Color>,
 }
 
 impl Image {
     /// Fill the image buffer with the default color
-    fn generate_buffer(width: u64, height: u64) -> Vec<Color> {
+    pub fn generate_buffer(width: u64, height: u64) -> Vec<Color> {
         let mut buffer: Vec<Color> = vec![Color::default(); (width * height) as usize];
         buffer.fill_with(Color::default);
         buffer

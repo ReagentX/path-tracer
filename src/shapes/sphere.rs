@@ -4,6 +4,9 @@ use crate::{
     utilities::{point::Point, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Sphere {
     center_t_0: Point,
     center_t_1: Point,
@@ -41,6 +44,7 @@ impl Sphere {
     }
 }
 
+#[typetag::serde]
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit> {
         let oc = ray.origin - self.center(ray.time);

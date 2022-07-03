@@ -1,0 +1,100 @@
+use std::{
+    fs::File,
+    io::{BufReader, BufWriter},
+    path::{Path, PathBuf},
+};
+
+use crate::{
+    shapes::world::World,
+    utilities::{camera::Camera, image::Image},
+};
+
+use serde::{Deserialize, Serialize};
+use serde_yaml;
+
+#[derive(Deserialize, Serialize)]
+pub struct Settings {
+    /// Sample rays cast per pixel
+    pub msaa_samples: f64,
+    /// Maximum number of times a ray is allowed to bounce
+    pub max_depth: u64,
+    /// Gamma correction applied after render
+    pub gamma: f64,
+    /// Initial time the camera shutter was opened
+    pub shutter_open: f64,
+    /// Time the shutter was closed
+    pub shutter_close: f64,
+}
+
+impl Settings {
+    pub fn new(
+        msaa_samples: f64,
+        max_depth: u64,
+        gamma: f64,
+        shutter_open: f64,
+        shutter_close: f64,
+    ) -> Self {
+        Self {
+            msaa_samples,
+            max_depth,
+            gamma,
+            shutter_open,
+            shutter_close,
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct Scene {
+    /// Render configuration
+    pub settings: Settings,
+    /// Image output size
+    pub image: Image,
+    /// Camera location
+    pub camera: Camera,
+    /// Objects to render
+    pub world: World,
+}
+
+impl Scene {
+    pub fn new(camera: Camera, settings: Settings, image: Image, world: World) -> Self {
+        Self {
+            settings,
+            image,
+            camera,
+            world,
+        }
+    }
+
+    pub fn render(&self, filepath: &str, filename: &str) {
+        self.image.save(filepath, filename, self.settings.gamma)
+    }
+
+    fn path(filepath: &str, filename: &str) -> PathBuf {
+        Path::new(filepath).join(format!("{filename}.scene"))
+    }
+
+    pub fn save(&self, filepath: &str, filename: &str) {
+        // Generate path
+        let path = Scene::path(filepath, filename);
+
+        // Create file at location
+        let file = File::create(&path).unwrap();
+        let buf_file = BufWriter::new(file);
+
+        println!("Writing scene...");
+        serde_yaml::to_writer(buf_file, self).unwrap();
+        println!("Wrote scene to {:0}", path.as_os_str().to_str().unwrap());
+    }
+
+    pub fn load(filepath: &str, filename: &str) -> Self {
+        // Generate path
+        let path = Scene::path(filepath, filename);
+        let file = File::open(&path).unwrap();
+        let buf_file = BufReader::new(file);
+
+        let mut scene: Self = serde_yaml::from_reader(buf_file).unwrap();
+        scene.image.buffer = Image::generate_buffer(scene.image.width, scene.image.height);
+        scene
+    }
+}

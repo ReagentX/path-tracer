@@ -2,9 +2,11 @@ use std::ops::{Add, Mul};
 
 use rand::distributions::{Distribution, Uniform};
 
+use serde::{Deserialize, Serialize};
+
 const MAX_COLOR: f64 = 256.;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Color {
     /// Red component
     pub r: f64,

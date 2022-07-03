@@ -4,6 +4,9 @@ use rand::Rng;
 
 use crate::utilities::{image::Image, point::Point, ray::Ray};
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Camera {
     origin: Point,
     horizontal: Point,

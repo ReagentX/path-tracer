@@ -6,6 +6,9 @@ use crate::{
     utilities::{color::Color, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Filter {
     albedo: Color,
     opacity: f64,
@@ -17,6 +20,7 @@ impl Filter {
     }
 }
 
+#[typetag::serde]
 impl Scatter for Filter {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let ray_out = Ray::new(hit.point, ray_in.direction, ray_in.time);

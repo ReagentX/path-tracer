@@ -6,6 +6,9 @@ use crate::{
     utilities::{color::Color, point::Point, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Metal {
     albedo: Color,
     /// 0..1 range of matte, higher means less reflective
@@ -18,6 +21,7 @@ impl Metal {
     }
 }
 
+#[typetag::serde]
 impl Scatter for Metal {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let reflected = ray_in.direction.reflect(hit.normal).normalized();

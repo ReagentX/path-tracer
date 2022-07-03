@@ -4,6 +4,9 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-rayon = "1.5.1"
 format_num = "0.1.0"
 rand = "0.8.5"
+rayon = "1.5.1"
+serde = { version = "1.0.138", features = ["derive"] }
+serde_yaml = "0.8.24"
+typetag = "0.2.0"

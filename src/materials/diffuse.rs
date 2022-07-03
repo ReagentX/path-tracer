@@ -6,6 +6,9 @@ use crate::{
     utilities::{color::Color, point::Point, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Lambertian {
     albedo: Color,
     probability: f64,
@@ -20,6 +23,7 @@ impl Lambertian {
     }
 }
 
+#[typetag::serde]
 impl Scatter for Lambertian {
     fn scatter(&self, ray_in: &Ray, hit: &Hit) -> Option<(Color, Ray)> {
         let mut target = hit.normal + Point::random_in_sphere().normalized();

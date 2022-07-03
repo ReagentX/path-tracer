@@ -3,9 +3,12 @@ use rand::Rng;
 use crate::{
     materials::scatter::Scatter,
     shapes::hit::Hit,
-    utilities::{color::Color, point::Point, ray::Ray},
+    utilities::{color::Color, ray::Ray},
 };
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
 pub struct Light {
     albedo: Color,
     intensity: f64,
@@ -17,6 +20,7 @@ impl Light {
     }
 }
 
+#[typetag::serde]
 impl Scatter for Light {
     fn scatter(&self, _: &Ray, _: &Hit) -> Option<(Color, Ray)> {
         None

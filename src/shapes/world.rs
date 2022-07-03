@@ -3,8 +3,11 @@ use crate::{
     utilities::ray::Ray,
 };
 
+use std::vec::Vec;
+
 pub type World = Vec<Box<dyn Hittable>>;
 
+#[typetag::serde]
 impl Hittable for World {
     /// Iterate through each item in the world, returning the closest hit
     fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit> {
