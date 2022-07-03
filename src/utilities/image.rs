@@ -60,8 +60,11 @@ impl Image {
     }
 
     /// 16:9 widescreen canvas of the specified height
-    pub fn widescreen(height: u64) -> Self {
-        Image::from_ratio(height, 16. / 9.)
+    pub fn widescreen(height: u64, orientation: Orientation) -> Self {
+        match orientation {
+            Orientation::Landscape => Image::from_ratio(height, 16. / 9.),
+            Orientation::Portrait => Image::from_ratio(height, 9. / 16.),
+        }
     }
 
     /// 1:1 square canvas of the specified height
@@ -70,24 +73,33 @@ impl Image {
     }
 
     /// 4K image size
-    pub fn UHD() -> Self {
-        Image::from_dimensions(4096, 2160)
+    pub fn uhd(orientation: Orientation) -> Self {
+        match orientation {
+            Orientation::Landscape => Image::from_dimensions(4096, 2160),
+            Orientation::Portrait => Image::from_dimensions(2160, 4096),
+        }
     }
 
     /// 2K image size
-    pub fn QHD() -> Self {
-        Image::from_dimensions(2560, 1440)
+    pub fn qhd(orientation: Orientation) -> Self {
+        match orientation {
+            Orientation::Landscape => Image::from_dimensions(2560, 1440),
+            Orientation::Portrait => Image::from_dimensions(1440, 2560),
+        }
     }
 
     /// HD image size
-    pub fn HD() -> Self {
-        Image::from_dimensions(1920, 1080)
+    pub fn hd(orientation: Orientation) -> Self {
+        match orientation {
+            Orientation::Landscape => Image::from_dimensions(1920, 1080),
+            Orientation::Portrait => Image::from_dimensions(1080, 1920),
+        }
     }
 
     /// iPhone 13 Pro Max image size
     ///
     /// Scale reduces the size by that amount. A value of `scale = 4` renders at 1/4 scale.
-    pub fn iPhone(scale: u64, orientation: Orientation) -> Self {
+    pub fn mobile(scale: u64, orientation: Orientation) -> Self {
         match orientation {
             Orientation::Landscape => Image::from_dimensions(2778 / scale, 1284 / scale),
             Orientation::Portrait => Image::from_dimensions(1284 / scale, 2778 / scale),
