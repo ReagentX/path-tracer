@@ -18,8 +18,20 @@ use super::{
 
 pub fn build_scene() -> Scene {
     let settings = Settings::new(10., 10, 1., 0., 1.);
-    let image = Image::widescreen(500, Landscape);
-    let camera = Camera::default_from_image(&image);
+    // let image = Image::widescreen(500, Landscape);
+    let image = Image::uhd(Landscape);
+    // let camera = Camera::default_from_image(&image);
+    let camera = Camera::new(
+        Point::new(0., 1., 0.),
+        Point::new(-10., 0., 0.),
+        Point::new(10., -0.1, 0.),
+        45.,
+        image.aspect_ratio(),
+        0.,
+        40.,
+        0.,
+        1.,
+    );
 
     // Create world
     let world: World = vec![
@@ -34,8 +46,8 @@ pub fn build_scene() -> Scene {
         )),
         // Closest
         Box::new(Sphere::new(
-            Point::new(-4.5, -0.7, -3.2),
-            Point::new(-4.5, -0.7, -3.2),
+            Point::new(-3., -0.7, -3.2),
+            Point::new(-3., -0.7, -3.2),
             settings.shutter_open,
             settings.shutter_close,
             1.,
@@ -43,17 +55,17 @@ pub fn build_scene() -> Scene {
         )),
         // Close
         Box::new(Sphere::new(
-            Point::new(-3., -0.65, -1.7),
-            Point::new(-3., -0.65, -1.7),
+            Point::new(-1.7, -0.6, -1.7),
+            Point::new(-1.7, -0.6, -1.7),
             settings.shutter_open,
             settings.shutter_close,
             1.,
-            Box::new(Dielectric::new(Color::gray(0.9), 1.5)),
+            Box::new(Dielectric::new(Color::rgb(0.6, 0.2, 0.9), 1.02)),
         )),
         // Far
         Box::new(Sphere::new(
-            Point::new(3., -0.55, 2.),
-            Point::new(3., -0.55, 2.),
+            Point::new(3., -0.55, 2.5),
+            Point::new(3., -0.55, 2.5),
             settings.shutter_open,
             settings.shutter_close,
             -1.,
@@ -61,8 +73,8 @@ pub fn build_scene() -> Scene {
         )),
         // Farther
         Box::new(Sphere::new(
-            Point::new(4.5, -0.7, 3.5),
-            Point::new(4.5, -0.7, 3.5),
+            Point::new(4.5, -0.7, 4.5),
+            Point::new(4.5, -0.7, 4.5),
             settings.shutter_open,
             settings.shutter_close,
             1.,
@@ -70,8 +82,8 @@ pub fn build_scene() -> Scene {
         )),
         // Farthest
         Box::new(Sphere::new(
-            Point::new(6.5, -0.9, 5.5),
-            Point::new(6.5, -0.9, 5.5),
+            Point::new(6.5, -1.1, 7.),
+            Point::new(6.5, -1.1, 7.),
             settings.shutter_open,
             settings.shutter_close,
             1.,
@@ -79,8 +91,8 @@ pub fn build_scene() -> Scene {
         )),
         // Farthest + 1
         Box::new(Sphere::new(
-            Point::new(8.5, -1.2, 7.5),
-            Point::new(8.5, -1.2, 7.5),
+            Point::new(8.5, -1.4, 9.5),
+            Point::new(8.5, -1.4, 9.5),
             settings.shutter_open,
             settings.shutter_close,
             1.,
@@ -88,8 +100,8 @@ pub fn build_scene() -> Scene {
         )),
         // Farthest + 2
         Box::new(Sphere::new(
-            Point::new(10.5, -1.5, 9.5),
-            Point::new(10.5, -1.5, 9.5),
+            Point::new(10.5, -1.8, 12.),
+            Point::new(10.5, -1.8, 12.),
             settings.shutter_open,
             settings.shutter_close,
             1.,
@@ -97,8 +109,8 @@ pub fn build_scene() -> Scene {
         )),
         // Front upper left
         Box::new(Sphere::new(
-            Point::new(-1.2, 2.1, 1.0),
-            Point::new(-1.2, 2.1, 1.3),
+            Point::new(0., 2.1, 1.0),
+            Point::new(0., 2.1, 1.3),
             settings.shutter_open,
             settings.shutter_close,
             0.2,
@@ -106,8 +118,8 @@ pub fn build_scene() -> Scene {
         )),
         // Front upper right
         Box::new(Sphere::new(
-            Point::new(-1.2, 2.4, -1.6),
-            Point::new(-1.2, 2.4, -1.4),
+            Point::new(0., 2.4, -1.6),
+            Point::new(0., 2.4, -1.4),
             settings.shutter_open,
             settings.shutter_close,
             0.2,
@@ -133,8 +145,8 @@ pub fn build_scene() -> Scene {
         )),
         // Marble
         Box::new(Sphere::new(
-            Point::new(-6., -1.52, 2.5),
-            Point::new(-6., -1.52, 2.5),
+            Point::new(0., -1.5, 3.5),
+            Point::new(0., -1.5, 3.5),
             settings.shutter_open,
             settings.shutter_close,
             0.2,
