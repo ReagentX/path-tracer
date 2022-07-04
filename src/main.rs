@@ -45,7 +45,7 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
 fn main() {
     let mut scene = Scene::load(
         env::current_dir().unwrap().to_str().unwrap(),
-        "scenes/dof_4k",
+        "scenes/test",
     );
     // let mut scene = build_scene();
     // scene.save(env::current_dir().unwrap().to_str().unwrap(), "scenes/doftest");
