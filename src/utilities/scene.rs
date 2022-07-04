@@ -116,6 +116,9 @@ impl Scene {
         // Fill image buffer
         scene.image.buffer = Image::generate_buffer(scene.image.width, scene.image.height);
 
+        // Update camera aspect ratio for image
+        scene.settings.camera.aspect_ratio = scene.image.aspect_ratio();
+
         // Build camera for scene
         scene.camera = Camera::new(&scene.settings.camera);
         scene
