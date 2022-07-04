@@ -1,9 +1,9 @@
 # path-tracer
 Implementation of a path tracer in Rust
 
-![](img/day.png)
+![](img/dof.png)
 
-![](img/night.png)
+![](img/glass.png)
 
 # Features
 
