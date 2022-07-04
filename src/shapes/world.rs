@@ -13,7 +13,7 @@ impl Hittable for World {
     fn hit(&self, ray: &Ray, time_min: f64, time_max: f64) -> Option<Hit> {
         let mut hit: Option<Hit> = None;
         // Stores the time it takes to hit the closest object to the camera
-        // This ensures that we respect the y-axis, that is, closer objects
+        // This ensures that we respect the z-axis, that is, closer objects
         // occlude farther objects
         let mut closest_so_far = time_max;
 

@@ -1,0 +1,230 @@
+---
+settings:
+  render:
+    msaa_samples: 100.0
+    max_depth: 10
+    gamma: 1.0
+    shutter_open: 0.0
+    shutter_close: 1.0
+  camera:
+    view_up:
+      x: 0.0
+      y: 1.0
+      z: 0.0
+    position:
+      x: 0.0
+      y: 0.0
+      z: 5.0
+    direction:
+      x: 0.0
+      y: 0.
+      z: -2.0
+    vertical_fov: 33.0
+    aspect_ratio: 1.776
+    aperture: 0.
+    focal_length: 1.0
+    shutter_open: 0.0
+    shutter_close: 1.0
+image:
+  width: 888
+  height: 500
+world:
+  - type: Sphere
+    center_t_0:
+      x: 3.1
+      y: -1.6
+      z: -8.0
+    center_t_1:
+      x: 3.1
+      y: -1.6
+      z: -8.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.6
+    material:
+      type: Light
+      albedo:
+        r: 0.14771056628757395
+        g: 0.2116724087679105
+        b: 0.6051881973025794
+        a: 255
+      intensity: 6.0
+  - type: Sphere
+    center_t_0:
+      x: -3.1
+      y: -1.6
+      z: -8.0
+    center_t_1:
+      x: -3.1
+      y: -1.6
+      z: -8.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.6
+    material:
+      type: Light
+      albedo:
+        r: 0.7387439024431925
+        g: 0.990300516609526
+        b: 0.5399830758688577
+        a: 255
+      intensity: 6.0
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: 0.0
+      z: -5.0
+    center_t_1:
+      x: 0.0
+      y: 0.0
+      z: -5.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.5
+    material:
+      type: Mirror
+      albedo:
+        r: 0.9
+        g: 0.9
+        b: 0.9
+        a: 255
+  - type: Sphere
+    center_t_0:
+      x: -3.3
+      y: -0.08
+      z: -5.2
+    center_t_1:
+      x: -3.3
+      y: -0.08
+      z: -5.2
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.5
+    material:
+      type: Metal
+      albedo:
+        r: 0.8348314955712957
+        g: 0.9154142771522882
+        b: 0.6842021951836339
+        a: 255
+      matte: 0.798314189385911
+  - type: Sphere
+    center_t_0:
+      x: 3.3
+      y: -0.08
+      z: -5.2
+    center_t_1:
+      x: 3.3
+      y: -0.08
+      z: -5.2
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.5
+    material:
+      type: Dielectric
+      albedo:
+        r: 0.8
+        g: 0.8
+        b: 0.8
+        a: 255
+      refraction_index: 1.02
+  - type: Sphere
+    center_t_0:
+      x: 1.2
+      y: 1.5
+      z: -3.8
+    center_t_1:
+      x: 1.2
+      y: 1.5
+      z: -3.8
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.5
+    material:
+      type: Dielectric
+      albedo:
+        r: 0.8024982318360462
+        g: 0.8024982318360462
+        b: 0.8024982318360462
+        a: 255
+      refraction_index: 1.5
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: -1.0
+      z: 15.0
+    center_t_1:
+      x: 0.0
+      y: -1.0
+      z: 15.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 7.0
+    material:
+      type: Light
+      albedo:
+        r: 0.7849443397262152
+        g: 0.6552596122331598
+        b: 0.8296689099587973
+        a: 255
+      intensity: 3.474543260152456
+  - type: Sphere
+    center_t_0:
+      x: -1.2
+      y: 1.0
+      z: -4.0
+    center_t_1:
+      x: -1.2
+      y: 1.1
+      z: -4.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.2
+    material:
+      type: Dielectric
+      albedo:
+        r: 0.7606644478063366
+        g: 0.7606644478063366
+        b: 0.7606644478063366
+        a: 255
+      refraction_index: 0.5997839083203182
+  - type: Sphere
+    center_t_0:
+      x: 1.2
+      y: -0.8
+      z: -4.0
+    center_t_1:
+      x: 1.2
+      y: -1.0
+      z: -4.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.2
+    material:
+      type: Metal
+      albedo:
+        r: 0.30751202127651744
+        g: 0.8940559966128063
+        b: 0.31927784685459937
+        a: 255
+      matte: 0.18712270653822194
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: -101.5
+      z: -2.0
+    center_t_1:
+      x: 0.0
+      y: -101.5
+      z: -2.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 100.0
+    material:
+      type: Lambertian
+      albedo:
+        r: 0.6735844442891379
+        g: 0.2028398096299318
+        b: 0.743433578809640716
+        a: 255
+      probability: 0.3258280190188496

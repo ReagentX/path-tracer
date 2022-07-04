@@ -1,0 +1,309 @@
+---
+settings:
+  render:
+    msaa_samples: 10.0
+    max_depth: 10
+    gamma: 1.0
+    shutter_open: 0.0
+    shutter_close: 1.0
+  camera:
+    view_up:
+      x: 0.0
+      y: 1.0
+      z: 0.0
+    position:
+      x: -11.0
+      y: 0.0
+      z: 0.0
+    direction:
+      x: 10.0
+      y: -0.1
+      z: 0.55
+    vertical_fov: 40.0
+    aspect_ratio: 1.776
+    aperture: 0.3
+    focal_length: 11.0
+    shutter_open: 0.0
+    shutter_close: 1.0
+image:
+  width: 3840
+  height: 2160
+world:
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    center_t_1:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.5
+    material:
+      type: Mirror
+      albedo:
+        r: 0.9
+        g: 0.9
+        b: 0.9
+        a: 255
+  - type: Sphere
+    center_t_0:
+      x: -3.6
+      y: -0.65
+      z: -2.9
+    center_t_1:
+      x: -3.6
+      y: -0.65
+      z: -2.9
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.0
+    material:
+      type: Metal
+      albedo:
+        r: 0.9
+        g: 0.9
+        b: 0.9
+        a: 255
+      matte: 0.9
+  - type: Sphere
+    center_t_0:
+      x: -1.8
+      y: -0.52
+      z: -1.7
+    center_t_1:
+      x: -1.8
+      y: -0.52
+      z: -1.7
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.0
+    material:
+      type: Dielectric
+      albedo:
+        r: 0.5
+        g: 0.5
+        b: 0.5
+        a: 255
+      refraction_index: 1.02
+  - type: Sphere
+    center_t_0:
+      x: 3.0
+      y: -0.55
+      z: 2.5
+    center_t_1:
+      x: 3.0
+      y: -0.55
+      z: 2.5
+    t_0: 0.0
+    t_1: 1.0
+    radius: -1.0
+    material:
+      type: Lambertian
+      albedo:
+        r: 0.9
+        g: 0.9
+        b: 0.9
+        a: 255
+      probability: 1.0
+  - type: Sphere
+    center_t_0:
+      x: 4.5
+      y: -0.7
+      z: 4.5
+    center_t_1:
+      x: 4.5
+      y: -0.7
+      z: 4.5
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.0
+    material:
+      type: Mirror
+      albedo:
+        r: 0.6
+        g: 0.6
+        b: 0.6
+        a: 255
+  - type: Sphere
+    center_t_0:
+      x: 6.5
+      y: -0.95
+      z: 7.0
+    center_t_1:
+      x: 6.5
+      y: -0.95
+      z: 7.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.0
+    material:
+      type: Metal
+      albedo:
+        r: 0.1
+        g: 0.6
+        b: 0.7
+        a: 255
+      matte: 0.2
+  - type: Sphere
+    center_t_0:
+      x: 8.5
+      y: -1.32
+      z: 9.6
+    center_t_1:
+      x: 8.5
+      y: -1.32
+      z: 9.6
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.0
+    material:
+      type: Lambertian
+      albedo:
+        r: 0.7
+        g: 0.7
+        b: 0.7
+        a: 255
+      probability: 1.0
+  - type: Sphere
+    center_t_0:
+      x: 10.5
+      y: -1.7
+      z: 12.3
+    center_t_1:
+      x: 10.5
+      y: -1.7
+      z: 12.3
+    t_0: 0.0
+    t_1: 1.0
+    radius: 1.0
+    material:
+      type: Metal
+      albedo:
+        r: 0.8
+        g: 0.1
+        b: 0.7
+        a: 255
+      matte: 0.9
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: 2.1
+      z: 1.0
+    center_t_1:
+      x: 0.0
+      y: 2.1
+      z: 1.3
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.2
+    material:
+      type: Metal
+      albedo:
+        r: 1.0
+        g: 0.7
+        b: 0.1
+        a: 255
+      matte: 0.3
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: 2.4
+      z: -1.6
+    center_t_1:
+      x: 0.0
+      y: 2.4
+      z: -1.4
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.2
+    material:
+      type: Metal
+      albedo:
+        r: 0.7
+        g: 0.1
+        b: 1.0
+        a: 255
+      matte: 0.7
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: -1.0
+      z: 17.0
+    center_t_1:
+      x: 0.0
+      y: -1.0
+      z: 17.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 7.0
+    material:
+      type: Light
+      albedo:
+        r: 0.5
+        g: 0.5
+        b: 0.1
+        a: 255
+      intensity: 8.0
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: -1.0
+      z: -17.0
+    center_t_1:
+      x: 0.0
+      y: -1.0
+      z: -17.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 7.0
+    material:
+      type: Light
+      albedo:
+        r: 0.5
+        g: 0.1
+        b: 0.5
+        a: 255
+      intensity: 8.0
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: -1.358
+      z: 3.5
+    center_t_1:
+      x: 0.0
+      y: -1.358
+      z: 3.5
+    t_0: 0.0
+    t_1: 1.0
+    radius: 0.2
+    material:
+      type: Dielectric
+      albedo:
+        r: 0.9
+        g: 0.9
+        b: 0.9
+        a: 255
+      refraction_index: 1.4
+  - type: Sphere
+    center_t_0:
+      x: 0.0
+      y: -101.5
+      z: 0.0
+    center_t_1:
+      x: 0.0
+      y: -101.5
+      z: 0.0
+    t_0: 0.0
+    t_1: 1.0
+    radius: 100.0
+    material:
+      type: Lambertian
+      albedo:
+        r: 0.9
+        g: 0.2
+        b: 0.4
+        a: 255
+      probability: 1.0

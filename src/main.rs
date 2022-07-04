@@ -6,7 +6,12 @@ mod utilities;
 
 use crate::{
     shapes::{hit::Hittable, world::World},
-    utilities::{color::Color, ray::Ray, scene::Scene},
+    utilities::{
+        color::Color,
+        ray::Ray,
+        scene::{self, Scene},
+        scenebuilder::build_scene,
+    },
 };
 
 use format_num::format_num;
@@ -40,8 +45,10 @@ fn ray_color(ray: &Ray, world: &World, depth: u64) -> Color {
 fn main() {
     let mut scene = Scene::load(
         env::current_dir().unwrap().to_str().unwrap(),
-        "scenes/dof_4k",
+        "scenes/test",
     );
+    // let mut scene = build_scene();
+    // scene.save(env::current_dir().unwrap().to_str().unwrap(), "scenes/doftest");
 
     let now = Instant::now();
     for row in 0..scene.image.height {
@@ -54,7 +61,7 @@ fn main() {
                 let mut green_component = 0.;
 
                 // Generate random rays for each pixel
-                for _ in 0..scene.settings.msaa_samples as u64 {
+                for _ in 0..scene.settings.render.msaa_samples as u64 {
                     // Get random endpoint
                     let mut rng = rand::thread_rng();
                     let random_u: f64 = rng.gen();
@@ -66,16 +73,16 @@ fn main() {
                     let r = scene.camera.get_ray(u, v);
 
                     // Get the pixel color
-                    let pixel = ray_color(&r, &scene.world, scene.settings.max_depth);
+                    let pixel = ray_color(&r, &scene.world, scene.settings.render.max_depth);
                     red_component += pixel.r;
                     green_component += pixel.g;
                     blue_component += pixel.b;
                 }
 
                 Color::rgb(
-                    red_component / scene.settings.msaa_samples,
-                    green_component / scene.settings.msaa_samples,
-                    blue_component / scene.settings.msaa_samples,
+                    red_component / scene.settings.render.msaa_samples,
+                    green_component / scene.settings.render.msaa_samples,
+                    blue_component / scene.settings.render.msaa_samples,
                 )
             })
             .collect();

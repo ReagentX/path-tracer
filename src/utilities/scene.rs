@@ -6,7 +6,10 @@ use std::{
 
 use crate::{
     shapes::world::World,
-    utilities::{camera::Camera, image::Image},
+    utilities::{
+        camera::{Camera, CameraSettings},
+        image::Image,
+    },
 };
 
 use serde::{Deserialize, Serialize};
@@ -14,6 +17,18 @@ use serde_yaml;
 
 #[derive(Deserialize, Serialize)]
 pub struct Settings {
+    pub render: RenderSettings,
+    pub camera: CameraSettings,
+}
+
+impl Settings {
+    pub fn new(render: RenderSettings, camera: CameraSettings) -> Self {
+        Self { render, camera }
+    }
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct RenderSettings {
     /// Sample rays cast per pixel
     pub msaa_samples: f64,
     /// Maximum number of times a ray is allowed to bounce
@@ -26,7 +41,7 @@ pub struct Settings {
     pub shutter_close: f64,
 }
 
-impl Settings {
+impl RenderSettings {
     pub fn new(
         msaa_samples: f64,
         max_depth: u64,
@@ -51,13 +66,14 @@ pub struct Scene {
     /// Image output size
     pub image: Image,
     /// Camera location
+    #[serde(skip_serializing, skip_deserializing)]
     pub camera: Camera,
     /// Objects to render
     pub world: World,
 }
 
 impl Scene {
-    pub fn new(camera: Camera, settings: Settings, image: Image, world: World) -> Self {
+    pub fn new(settings: Settings, image: Image, camera: Camera, world: World) -> Self {
         Self {
             settings,
             image,
@@ -67,7 +83,8 @@ impl Scene {
     }
 
     pub fn render(&self, filepath: &str, filename: &str) {
-        self.image.save(filepath, filename, self.settings.gamma)
+        self.image
+            .save(filepath, filename, self.settings.render.gamma)
     }
 
     fn path(filepath: &str, filename: &str) -> PathBuf {
@@ -91,10 +108,19 @@ impl Scene {
         // Generate path
         let path = Scene::path(filepath, filename);
         let file = File::open(&path).unwrap();
-        let buf_file = BufReader::new(file);
 
+        // Read and parse scene file
+        let buf_file = BufReader::new(file);
         let mut scene: Self = serde_yaml::from_reader(buf_file).unwrap();
+
+        // Fill image buffer
         scene.image.buffer = Image::generate_buffer(scene.image.width, scene.image.height);
+
+        // Update camera aspect ratio for image
+        scene.settings.camera.aspect_ratio = scene.image.aspect_ratio();
+
+        // Build camera for scene
+        scene.camera = Camera::new(&scene.settings.camera);
         scene
     }
 }
