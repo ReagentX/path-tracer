@@ -11,3 +11,7 @@ Cargo.lock
 
 # Dev Environment
 /render/
+.vscode/*
+
+# OS Files
+.DS_Store
