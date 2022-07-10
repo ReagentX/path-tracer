@@ -7,9 +7,7 @@ mod utilities;
 use crate::{
     shapes::{hit::Hittable, world::World},
     utilities::{
-        color::Color,
-        ray::Ray,
-        scene::{self, Scene},
+        color::Color, image::Image, progress::build_progress_bar, ray::Ray, scene::Scene,
         scenebuilder::build_scene,
     },
 };
@@ -48,12 +46,16 @@ fn main() {
         "scenes/test",
     );
     // let mut scene = build_scene();
-    // scene.save(env::current_dir().unwrap().to_str().unwrap(), "scenes/doftest");
+    // scene.save(env::current_dir().unwrap().to_str().unwrap(), "scenes/iwp");
 
+    let pb = build_progress_bar(scene.image.pixels());
+    let mut pixels_rendered = 0;
     let now = Instant::now();
+
+    // Iterate through each row in parallel, collecting each row to write to the image
     for row in 0..scene.image.height {
         let scanline: Vec<Color> = (0..scene.image.width)
-            .into_par_iter() // drop in to use multiple cores!
+            .into_par_iter()
             .map(|col| {
                 // Collect color samples for MSAA
                 let mut red_component = 0.;
@@ -61,9 +63,9 @@ fn main() {
                 let mut green_component = 0.;
 
                 // Generate random rays for each pixel
+                let mut rng = rand::thread_rng();
                 for _ in 0..scene.settings.render.msaa_samples as u64 {
                     // Get random endpoint
-                    let mut rng = rand::thread_rng();
                     let random_u: f64 = rng.gen();
                     let random_v: f64 = rng.gen();
 
@@ -87,10 +89,16 @@ fn main() {
             })
             .collect();
 
+        // Emit progress
+        pixels_rendered += scene.image.width;
+        pb.set_position(pixels_rendered);
+
+        // Write the scanline to the image
         for (col, pixel) in scanline.iter().enumerate() {
             *scene.image.color_at(col as u64, row) = *pixel;
         }
     }
+    pb.finish_at_current_pos();
 
     // Print metrics
     let elapsed = now.elapsed().as_millis();

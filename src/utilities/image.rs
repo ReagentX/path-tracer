@@ -110,6 +110,11 @@ impl Image {
         }
     }
 
+    /// Gets the number of pixels in the iamge
+    pub fn pixels(&self) -> u64 {
+        self.width * self.height
+    }
+
     pub fn aspect_ratio(&self) -> f64 {
         self.width as f64 / self.height as f64
     }
