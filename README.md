@@ -1,36 +1,38 @@
 # path-tracer
+
 Implementation of a path tracer in Rust
 
-![](img/dof.png)
+![dof](img/dof.png)
 
-![](img/glass.png)
+![glass](img/glass.png)
 
-# Features
+## Features
 
 - Render pipeline:
-    - Shapes
-        - Sphere
-        - World (collection of shapes)
-    - Materials
-        - Lighting
-        - Transparency
-        - Metals
-        - Glass
-        - Lambertians
-        - Dielectrics
-    - Camera
-        - FOV
-        - Focal length
-        - Position
+  - Shapes
+    - Sphere
+    - Triangle
+    - World (collection of shapes)
+  - Materials
+    - Lighting
+    - Transparency
+    - Metals
+    - Glass
+    - Lambertians
+    - Dielectrics
+  - Camera
+    - FOV
+    - Focal length
+    - Position
 - Image:
-    - In-memory buffer of canvas data
-    - Utility methods to iterate over each `(x, y)` pixel
-    - Buffered write of pixel data, reaching ≈9.5k pixels-per-milisecond (p/ms) on i7-6700K
+  - In-memory buffer of canvas data
+  - Utility methods to iterate over each `(x, y)` pixel
+  - Buffered write of pixel data, reaching ≈11k pixels-per-millisecond (p/ms) on M1 Max
 - Scene
-    - Save scene to file
-    - Load scene from file
-    - Scene data
-        - Render settings
-        - Image resolution
-        - Camera position
-        - Object placement
+  - Save scene to file
+  - Load scene from file
+  - Scene data
+    - Render settings
+    - Image resolution
+    - Camera position
+    - Object placement
