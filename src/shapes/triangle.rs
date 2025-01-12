@@ -7,6 +7,7 @@ use crate::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
+/// A triangle, defined in clockwise points
 pub struct Triangle {
     a: Point,
     b: Point,
@@ -15,7 +16,7 @@ pub struct Triangle {
 }
 
 impl Triangle {
-    /// Order of points matters
+    /// Order of points (defined clockwise) matters
     /// - `a` is part of the base
     /// - `b` is part of the base
     /// - `c` is the zenith
