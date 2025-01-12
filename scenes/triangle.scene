@@ -26,8 +26,8 @@ settings:
     shutter_open: 0.0
     shutter_close: 1.0
 image:
-  width: 1500
-  height: 1500
+  width: 1000
+  height: 1000
 world:
   - type: Sphere
     center_t_0:
@@ -60,7 +60,7 @@ world:
       z: 0.3
     t_0: 0.0
     t_1: 1.0
-    radius: 0.25
+    radius: 0.35
     material:
       type: Light
       albedo:
@@ -68,7 +68,7 @@ world:
         g: 1.0
         b: 1.0
         a: 255
-      intensity: 50.0
+      intensity: 500.0
   - type: Triangle
     a:
       x: -5.0
