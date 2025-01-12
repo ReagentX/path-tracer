@@ -1,7 +1,7 @@
 ---
 settings:
   render:
-    msaa_samples: 100.0
+    msaa_samples: 1000.0
     max_depth: 5
     gamma: 1.0
     shutter_open: 0.0
@@ -68,7 +68,7 @@ world:
         g: 1.0
         b: 1.0
         a: 255
-      intensity: 500.0
+      intensity: 250.0
   - type: Triangle
     a:
       x: -5.0
@@ -130,7 +130,7 @@ world:
         g: 1.0
         b: 1.0
         a: 255
-      intensity: 30.0
+      intensity: 20.0
   - type: Sphere
     center_t_0:
       x: 0.0
