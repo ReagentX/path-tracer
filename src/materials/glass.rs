@@ -38,7 +38,7 @@ impl Scatter for Dielectric {
         let refraction_ratio = hit
             .front_face
             .then(|| 1. / self.refraction_index)
-            .unwrap_or_else(|| self.refraction_index);
+            .unwrap_or(self.refraction_index);
 
         let unit_direction = ray_in.direction.normalized();
         let cos_theta = (-1. * unit_direction).dot(hit.normal).min(1.);
