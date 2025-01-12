@@ -46,7 +46,10 @@ fn main() {
         "scenes/test",
     );
     // let mut scene = build_scene();
-    // scene.save(env::current_dir().unwrap().to_str().unwrap(), "scenes/iwp");
+    // scene.save(
+    //     env::current_dir().unwrap().to_str().unwrap(),
+    //     "scenes/triangle",
+    // );
 
     let pb = build_progress_bar(scene.image.pixels());
     let mut pixels_rendered = 0;
@@ -98,7 +101,7 @@ fn main() {
             *scene.image.color_at(col as u64, row) = *pixel;
         }
     }
-    pb.finish_at_current_pos();
+    pb.finish();
 
     // Print metrics
     let elapsed = now.elapsed().as_millis();
