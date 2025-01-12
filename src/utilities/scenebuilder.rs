@@ -4,7 +4,7 @@ use crate::{
     materials::{
         diffuse::Lambertian, glass::Dielectric, light::Light, metal::Metal, mirror::Mirror,
     },
-    shapes::{sphere::Sphere, world::World},
+    shapes::{sphere::Sphere, triangle::Triangle, world::World},
 };
 
 use super::{
@@ -19,18 +19,19 @@ use super::{
 };
 
 pub fn build_scene() -> Scene {
-    let render_settings = RenderSettings::new(10., 10, 1., 0., 1.);
-    let image = Image::mobile(3, Portrait);
-    // let image = Image::uhd(Landscape);
+    let render_settings = RenderSettings::new(10., 5, 1., 0., 1.);
+    let image = Image::square(1000);
+
+    // let image = Image::hd(Landscape);
     // let camera = Camera::default_from_image(&image);
     let camera_settings = CameraSettings::new(
         Point::new(0., 1., 0.),
-        Point::new(0., 0., 3.),
-        Point::new(0., 0., -2.),
-        45.,
+        Point::new(0., 0., 5.),
+        Point::new(0., 1., -2.),
+        100.,
         image.aspect_ratio(),
         0.,
-        40.,
+        45.,
         0.,
         1.,
     );
@@ -39,24 +40,50 @@ pub fn build_scene() -> Scene {
     let settings = Settings::new(render_settings, camera_settings);
 
     // Create world
-    let mut world: World = vec![
-        // Center
+
+    let world: World = vec![
+        // Right marble
         Box::new(Sphere::new(
-            Point::new(0., -0.28, -6.),
-            Point::new(0., -0.28, -6.),
+            Point::new(0.5, 0., 1.5),
+            Point::new(0.5, 0., 1.5),
             settings.camera.shutter_open,
             settings.camera.shutter_close,
-            1.4,
-            Box::new(Dielectric::new(Color::gray(0.9), 1.5)),
+            0.2,
+            Box::new(Dielectric::new(Color::gray(1.), 1.9)),
         )),
-        // Light
+        // Left lamp
         Box::new(Sphere::new(
-            Point::new(0., 10., -4.),
-            Point::new(0., 10., -4.),
+            Point::new(-2.2, -1.5, 0.3),
+            Point::new(-2.2, -1.5, 0.3),
+            settings.camera.shutter_open,
+            settings.camera.shutter_close,
+            0.35,
+            Box::new(Light::new(Color::gray(1.), 250.)),
+        )),
+        // Left Triangle
+        Box::new(Triangle::new(
+            Point::new(-5., -3., -5.),
+            Point::new(0., -4., 0.),
+            Point::new(0., 5., -5.),
+            // Box::new(Mirror::new(Color::gray(1.))),
+            Box::new(Lambertian::new(Color::rgb(1., 0., 0.), 0.5)),
+        )),
+        // Right Triangle
+        Box::new(Triangle::new(
+            Point::new(5., -3., -5.),
+            Point::new(0., -4., 0.),
+            Point::new(0., 5., -5.),
+            // Box::new(Mirror::new(Color::gray(1.))),
+            Box::new(Lambertian::new(Color::rgb(0., 1., 0.), 0.5)),
+        )),
+        // Sun
+        Box::new(Sphere::new(
+            Point::new(0., 50., 0.),
+            Point::new(0., 50., 0.),
             settings.camera.shutter_open,
             settings.camera.shutter_close,
             5.,
-            Box::new(Light::new(Color::gray(1.), 4.)),
+            Box::new(Light::new(Color::gray(1.), 20.)),
         )),
         // Ground
         Box::new(Sphere::new(
@@ -65,24 +92,24 @@ pub fn build_scene() -> Scene {
             settings.camera.shutter_open,
             settings.camera.shutter_close,
             100.,
-            Box::new(Lambertian::new(Color::rgb(0.9, 0.2, 0.4), 1.)),
+            Box::new(Lambertian::new(Color::rgb(0.4, 0.3, 0.3), 1.)),
         )),
     ];
 
     // Add stars
-    let mut rng = rand::thread_rng();
-    for _ in 0..100 {
-        let random_x: f64 = rng.gen_range(-55f64..55f64);
-        let random_y: f64 = rng.gen_range(-20f64..75f64);
-        world.push(Box::new(Sphere::new(
-            Point::new(random_x, random_y, -100. + (random_x.abs() / 2.)),
-            Point::new(random_x, random_y, -100. + (random_x.abs() / 2.)),
-            settings.camera.shutter_open,
-            settings.camera.shutter_close,
-            0.3,
-            Box::new(Light::new(Color::random(), 5.)),
-        )));
-    }
+    // let mut rng = rand::thread_rng();
+    // for _ in 0..300 {
+    //     let random_x: f64 = rng.gen_range(-55f64..55f64);
+    //     let random_y: f64 = rng.gen_range(-80f64..80f64);
+    //     world.push(Box::new(Sphere::new(
+    //         Point::new(random_x, random_y, -100. + (random_x.abs() / 2.)),
+    //         Point::new(random_x, random_y, -100. + (random_x.abs() / 2.)),
+    //         settings.camera.shutter_open,
+    //         settings.camera.shutter_close,
+    //         0.3,
+    //         Box::new(Light::new(Color::random(), 5.)),
+    //     )));
+    // }
     // for _ in 0..50 {
     //     let mut rng = rand::thread_rng();
     //     let random_x: f64 = rng.gen_range(-300f64..300f64);
