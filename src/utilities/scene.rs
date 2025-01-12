@@ -13,7 +13,7 @@ use crate::{
 };
 
 use serde::{Deserialize, Serialize};
-use serde_yaml;
+use serde_yml;
 
 #[derive(Deserialize, Serialize)]
 pub struct Settings {
@@ -100,7 +100,7 @@ impl Scene {
         let buf_file = BufWriter::new(file);
 
         println!("Writing scene...");
-        serde_yaml::to_writer(buf_file, self).unwrap();
+        serde_yml::to_writer(buf_file, self).unwrap();
         println!("Wrote scene to {:0}", path.as_os_str().to_str().unwrap());
     }
 
@@ -111,7 +111,7 @@ impl Scene {
 
         // Read and parse scene file
         let buf_file = BufReader::new(file);
-        let mut scene: Self = serde_yaml::from_reader(buf_file).unwrap();
+        let mut scene: Self = serde_yml::from_reader(buf_file).unwrap();
 
         // Fill image buffer
         scene.image.buffer = Image::generate_buffer(scene.image.width, scene.image.height);

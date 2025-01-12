@@ -8,6 +8,6 @@ format_num = "0.1.0"
 indicatif = "0.17.9"
 rand = "0.8.5"
 rayon = "1.10.0"
-serde = {version = "1.0.138", features = ["derive"]}
-serde_yaml = "0.8.24"
-typetag = "0.2.0"
+serde = {version = "1.0.217", features = ["derive"]}
+serde_yml = "0.0.12"
+typetag = "0.2.19"
